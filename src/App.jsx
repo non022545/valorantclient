@@ -10,13 +10,27 @@ function App() {
   const [price, setPrice] = useState("")  // ให้เป็น string รับ input ก่อน
   const [description, setDescription] = useState("")
   const [editId, setEditId] = useState(null)
-  const [isDarkMode, setIsDarkMode] = useState(false) // เพิ่มบรรทัดนี้
+const [isDarkMode, setIsDarkMode] = useState(false);
 
+useEffect(() => {
+  const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
+  setIsDarkMode(savedDarkMode);
+}, []);
 
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode)
+useEffect(() => {
+  if (isDarkMode) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
   }
+}, [isDarkMode]);
+
+const toggleDarkMode = () => {
+  const newMode = !isDarkMode;
+  setIsDarkMode(newMode);
+  localStorage.setItem('isDarkMode', newMode);
+};
+
 
   const saveOrUpdate = async () => {
     if (!name.trim() || !rankvalo.trim() || price === "" || isNaN(Number(price)) || !description.trim()) {
