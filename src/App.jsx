@@ -27,8 +27,8 @@ function App() {
     try {
       if (editId === null) {
         // CREATE
-        await axios.post(`http://localhost:3000/createid`, {
-          // await axios.post(`https://valorantserver-production.up.railway.app/deleteid`, {
+        // await axios.post(`http://localhost:3000/createid`, {
+          await axios.post(`https://valorantserver-production.up.railway.app/deleteid`, {
           name,
           rankvalo,
           price: Number(price),
@@ -41,8 +41,8 @@ function App() {
         })
       } else {
         // UPDATE
-        await axios.put(`http://localhost:3000/updateid/${editId}`, {
-          // await axios.put(`https://valorantserver-production.up.railway.app/updateid/${editId}`, {
+        // await axios.put(`http://localhost:3000/updateid/${editId}`, {
+          await axios.put(`https://valorantserver-production.up.railway.app/updateid/${editId}`, {
           name,
           rankvalo,
           price: Number(price),
@@ -81,8 +81,8 @@ function App() {
 
     if (confirmResult.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3000/deleteid/${id}`)
-        // await axios.delete(`https://valorantserver-production.up.railway.app/deleteid/${id}`)
+        // await axios.delete(`http://localhost:3000/deleteid/${id}`)
+        await axios.delete(`https://valorantserver-production.up.railway.app/deleteid/${id}`)
         await fetchdatavalo()
         Swal.fire('ลบแล้ว!', 'ข้อมูลถูกลบเรียบร้อย.', 'success')
       } catch (error) {
@@ -95,8 +95,8 @@ function App() {
 
   const fetchdatavalo = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/stockvalorant`)
-      // const response = await axios.get(`https://valorantserver-production.up.railway.app/stockvalorant`)
+      // const response = await axios.get(`http://localhost:3000/stockvalorant`)
+      const response = await axios.get(`https://valorantserver-production.up.railway.app/stockvalorant`)
       setDatavalolist(response.data)
     } catch (error) {
       console.log("Fail fetchdatavalorant")
