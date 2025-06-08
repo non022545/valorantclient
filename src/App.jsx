@@ -10,26 +10,31 @@ function App() {
   const [price, setPrice] = useState("")  // ให้เป็น string รับ input ก่อน
   const [description, setDescription] = useState("")
   const [editId, setEditId] = useState(null)
-const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [additem, setAdditem] = useState(false)
 
-useEffect(() => {
-  const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
-  setIsDarkMode(savedDarkMode);
-}, []);
-
-useEffect(() => {
-  if (isDarkMode) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
+  const btnadditem = () => {
+    setAdditem(true)
   }
-}, [isDarkMode]);
 
-const toggleDarkMode = () => {
-  const newMode = !isDarkMode;
-  setIsDarkMode(newMode);
-  localStorage.setItem('isDarkMode', newMode);
-};
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
+    setIsDarkMode(savedDarkMode);
+  }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    localStorage.setItem('isDarkMode', newMode);
+  };
 
 
   const saveOrUpdate = async () => {
@@ -42,7 +47,7 @@ const toggleDarkMode = () => {
       if (editId === null) {
         // CREATE
         // await axios.post(`http://localhost:3000/createid`, {
-          await axios.post(`https://valorantserver-production.up.railway.app/deleteid`, {
+        await axios.post(`https://valorantserver-production.up.railway.app/deleteid`, {
           name,
           rankvalo,
           price: Number(price),
@@ -56,7 +61,7 @@ const toggleDarkMode = () => {
       } else {
         // UPDATE
         // await axios.put(`http://localhost:3000/updateid/${editId}`, {
-          await axios.put(`https://valorantserver-production.up.railway.app/updateid/${editId}`, {
+        await axios.put(`https://valorantserver-production.up.railway.app/updateid/${editId}`, {
           name,
           rankvalo,
           price: Number(price),
@@ -133,67 +138,79 @@ const toggleDarkMode = () => {
             >
               {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
             </button>
+
+
           </div>
 
           <h1 className="text-4xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
             Stock Valorant Management
-          </h1>
 
-          {/* Form */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
-              {editId === null ? "Add New Stock" : "Update Stock"}
-            </h2>
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  placeholder="Name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Rank</label>
-                <input
-                  type="text"
-                  value={rankvalo}
-                  onChange={(e) => setRankvalo(e.target.value)}
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  placeholder="Rank"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Price</label>
-                <input
-                  type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  placeholder="Price"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
-                <input
-                  type="text"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  placeholder="Description"
-                />
-              </div>
-            </form>
+          </h1>
+          <div className='flex justify-end'>
             <button
-              onClick={saveOrUpdate}
-              className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+              onClick={() => setAdditem(!additem)}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
             >
-              {editId === null ? "Save" : "Update"}
+              {additem ? "❌ Close Form" : "➕ Add Item"}
             </button>
           </div>
 
+          {/* Form */}
+          {additem &&
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
+                {editId === null ? "Add New Stock" : "Update Stock"}
+              </h2>
+              <form className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Rank</label>
+                  <input
+                    type="text"
+                    value={rankvalo}
+                    onChange={(e) => setRankvalo(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Rank"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Price</label>
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Price"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
+                  <input
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Description"
+                  />
+                </div>
+              </form>
+              <button
+                onClick={saveOrUpdate}
+                className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+              >
+                {editId === null ? "Save" : "Update"}
+              </button>
+            </div>
+          }
           {/* List */}
           <div className="mt-10">
             <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
@@ -227,6 +244,7 @@ const toggleDarkMode = () => {
                           setPrice(product.price)
                           setDescription(product.description)
                           window.scrollTo({ top: 0, behavior: 'smooth' })
+                          setAdditem(true)
                         }}
                         className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
                       >
@@ -246,7 +264,7 @@ const toggleDarkMode = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 
