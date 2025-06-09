@@ -7,8 +7,10 @@ function App() {
   const [datavalolist, setDatavalolist] = useState([])
   const [name, setName] = useState("")
   const [rankvalo, setRankvalo] = useState("")
-  const [price, setPrice] = useState("")  // ให้เป็น string รับ input ก่อน
+  const [price, setPrice] = useState("")
   const [description, setDescription] = useState("")
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState("")
   const [editId, setEditId] = useState(null)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [additem, setAdditem] = useState(false)
@@ -36,7 +38,6 @@ function App() {
     localStorage.setItem('isDarkMode', newMode);
   };
 
-
   const saveOrUpdate = async () => {
     if (!name.trim() || !rankvalo.trim() || price === "" || isNaN(Number(price)) || !description.trim()) {
       alert("Please fill all fields correctly.")
@@ -44,14 +45,22 @@ function App() {
     }
 
     try {
+      const formData = new FormData()
+      formData.append("name", name)
+      formData.append("rankvalo", rankvalo)
+      formData.append("price", Number(price))
+      formData.append("description", description)
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
       if (editId === null) {
         // CREATE
-        // await axios.post(`http://localhost:3000/createid`, {
-        await axios.post(`https://valorantserver-production.up.railway.app/deleteid`, {
-          name,
-          rankvalo,
-          price: Number(price),
-          description,
+        await axios.post(`http://localhost:3000/createid`, formData, {
+          // await axios.post(`https://valorantserver-production.up.railway.app/createid`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         })
         Swal.fire({
           icon: 'success',
@@ -60,12 +69,11 @@ function App() {
         })
       } else {
         // UPDATE
-        // await axios.put(`http://localhost:3000/updateid/${editId}`, {
-        await axios.put(`https://valorantserver-production.up.railway.app/updateid/${editId}`, {
-          name,
-          rankvalo,
-          price: Number(price),
-          description,
+        await axios.put(`http://localhost:3000/updateid/${editId}`, formData, {
+          // await axios.put(`https://valorantserver-production.up.railway.app/updateid/${editId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         })
         Swal.fire({
           icon: 'success',
@@ -80,6 +88,8 @@ function App() {
       setRankvalo("")
       setPrice("")
       setDescription("")
+      setImageFile(null)
+      setImagePreview("")
     } catch (error) {
       console.error("Error saving item:", error)
       alert("Error saving item")
@@ -100,8 +110,8 @@ function App() {
 
     if (confirmResult.isConfirmed) {
       try {
-        // await axios.delete(`http://localhost:3000/deleteid/${id}`)
-        await axios.delete(`https://valorantserver-production.up.railway.app/deleteid/${id}`)
+        await axios.delete(`http://localhost:3000/deleteid/${id}`)
+        // await axios.delete(`https://valorantserver-production.up.railway.app/deleteid/${id}`)
         await fetchdatavalo()
         Swal.fire('ลบแล้ว!', 'ข้อมูลถูกลบเรียบร้อย.', 'success')
       } catch (error) {
@@ -111,11 +121,10 @@ function App() {
     }
   }
 
-
   const fetchdatavalo = async () => {
     try {
-      // const response = await axios.get(`http://localhost:3000/stockvalorant`)
-      const response = await axios.get(`https://valorantserver-production.up.railway.app/stockvalorant`)
+      const response = await axios.get(`http://localhost:3000/stockvalorant`)
+      // const response = await axios.get(`https://valorantserver-production.up.railway.app/stockvalorant`)
       setDatavalolist(response.data)
     } catch (error) {
       console.log("Fail fetchdatavalorant")
@@ -138,14 +147,12 @@ function App() {
             >
               {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
             </button>
-
-
           </div>
 
           <h1 className="text-4xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
             Stock Valorant Management
-
           </h1>
+
           <div className='flex justify-end'>
             <button
               onClick={() => setAdditem(!additem)}
@@ -162,6 +169,40 @@ function App() {
                 {editId === null ? "Add New Stock" : "Update Stock"}
               </h2>
               <form className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Image Upload</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0]
+                      setImageFile(file)
+                      if (file) {
+                        const reader = new FileReader()
+                        reader.onloadend = () => {
+                          setImagePreview(reader.result)  // base64 ของไฟล์ใหม่
+                        }
+                        reader.readAsDataURL(file)
+                      } else {
+                        setImagePreview("")
+                      }
+                    }}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+
+                {/* Image Preview */}
+                {/* Image Preview */}
+                {imagePreview && (
+                  <img
+                    key={imagePreview}  // บังคับรีเฟรชเมื่อเปลี่ยน
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-100 object-cover mb-2 rounded"
+                  />
+                )}
+
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
                   <input
@@ -211,6 +252,7 @@ function App() {
               </button>
             </div>
           }
+
           {/* List */}
           <div className="mt-10">
             <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
@@ -220,45 +262,68 @@ function App() {
               <p className="text-gray-500 dark:text-gray-400">No data available.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {datavalolist.map((product) => (
-                  <div
-                    key={product.id}
-                    className="border rounded-lg p-4 shadow-md bg-white dark:bg-gray-700 hover:shadow-lg transition"
-                  >
-                    <div className="mb-2">
-                      <h3 className="text-lg font-bold text-blue-700 dark:text-blue-300 mb-1">#{product.id} - {product.name}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        <span className="font-semibold">Rank:</span> {product.rankvalo}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        <span className="font-semibold">Price:</span> ${product.price}
-                      </p>
-                      <p className="text-gray-700 dark:text-gray-200 mt-1">{product.description}</p>
+                {datavalolist.map((product) => {
+                  const imageBaseUrl = "http://localhost:3000"; // หรือ URL จริงของเซิร์ฟเวอร์คุณ
+                  const imageSrc = product.imageUrl ? imageBaseUrl + product.imageUrl : "";
+
+                  return (
+                    <div
+                      key={product.id}
+                      className="border rounded-lg p-4 shadow-md bg-white dark:bg-gray-700 hover:shadow-lg transition"
+                    >
+                      {/* รูปภาพ */}
+                      {imageSrc && (
+                        <div className="rounded overflow-hidden mb-4" >
+                          <img
+                            src={imageSrc}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                      )}
+
+                      <div className="mb-2">
+                        <h3 className="text-lg font-bold text-blue-700 dark:text-blue-300 mb-1">
+                          #{product.id} - {product.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          <span className="font-semibold">Rank:</span> {product.rankvalo}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          <span className="font-semibold">Price:</span> ${product.price}
+                        </p>
+                        <p className="text-gray-700 dark:text-gray-200 mt-1">{product.description}</p>
+                      </div>
+
+                      <div className="flex gap-2 mt-4">
+                        <button
+                          onClick={() => {
+                            setEditId(product.id)
+                            setName(product.name)
+                            setRankvalo(product.rankvalo)
+                            setPrice(product.price)
+                            setDescription(product.description)
+                            setImageFile(null)
+                            setImagePreview(imageSrc)  // แสดงรูปเก่าในฟอร์มแก้ไข
+                            window.scrollTo({ top: 0, behavior: 'smooth' })
+                            setAdditem(true)
+                          }}
+                          className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deletevalo(product.id)}
+                          className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex gap-2 mt-4">
-                      <button
-                        onClick={() => {
-                          setEditId(product.id)
-                          setName(product.name)
-                          setRankvalo(product.rankvalo)
-                          setPrice(product.price)
-                          setDescription(product.description)
-                          window.scrollTo({ top: 0, behavior: 'smooth' })
-                          setAdditem(true)
-                        }}
-                        className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deletevalo(product.id)}
-                        className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
+
               </div>
             )}
           </div>
