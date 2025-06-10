@@ -344,20 +344,22 @@ function App() {
                             setPrice(product.price)
                             setDescription(product.description)
                             setImageFile(null)
-                            setImagePreview(
-                              product.imageUrl
-                                ? `https://valorantserver-production.up.railway.app${product.imageUrl}`
-                                : ""
-                            )
+
+                            const imageUrl = product.imageUrl || "";
+                            const fullImageUrl = imageUrl.startsWith("http")
+                              ? imageUrl
+                              : `https://valorantserver-production.up.railway.app${imageUrl}`;
+
+                            setImagePreview(imageUrl ? fullImageUrl : "")
 
                             window.scrollTo({ top: 0, behavior: 'smooth' })
                             setAdditem(true)
                           }}
-
                           className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
                         >
                           Edit
                         </button>
+
 
                         <button
                           onClick={() => deletevalo(product.id)}
