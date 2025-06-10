@@ -285,7 +285,7 @@ function App() {
                       {imageSrc && (
                         <div className="rounded overflow-hidden mb-4">
                           <img
-                            src={product.imageUrl ? `https://valorantserver-production.up.railway.app${product.imageUrl}` : "https://via.placeholder.com/300x180?text=No+Image"}
+                            src={product.imageUrl || "https://placehold.co/300x180?text=No+Image"}
                             alt={product.name}
                             className="w-full h-100 object-cover"
                             onError={(e) => {
@@ -293,6 +293,7 @@ function App() {
                               e.target.src = "https://placehold.co/300x180?text=No+Image";
                             }}
                           />
+
 
                         </div>
                       )}
