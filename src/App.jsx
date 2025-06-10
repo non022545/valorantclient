@@ -20,6 +20,11 @@ function App() {
   }
 
   useEffect(() => {
+    console.log('datavalolist:', datavalolist);
+  }, [datavalolist]);
+
+
+  useEffect(() => {
     const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
     setIsDarkMode(savedDarkMode);
   }, []);
@@ -44,44 +49,49 @@ function App() {
       return
     }
 
+    console.log({
+      name,
+      rankvalo,
+      price,
+      description,
+      imageFile
+    })
+
     try {
       const formData = new FormData()
-      formData.append("name", name)
-      formData.append("rankvalo", rankvalo)
+      formData.append("name", name.trim())
+      formData.append("rankvalo", rankvalo.trim())
       formData.append("price", Number(price))
-      formData.append("description", description)
+      formData.append("description", description.trim())
+
       if (imageFile) {
         formData.append('image', imageFile);
       }
 
-      if (editId === null) {
-        // CREATE
-        // await axios.post(`http://localhost:3000/createid`, formData, {
-          await axios.post(`https://valorantserver-production.up.railway.app/createid`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-        Swal.fire({
-          icon: 'success',
-          title: 'เพิ่มข้อมูลสำเร็จ!',
-          text: 'ข้อมูลถูกเพิ่มแล้วในระบบ',
-        })
-      } else {
-        // UPDATE
-        // await axios.put(`http://localhost:3000/updateid/${editId}`, formData, {
-          await axios.put(`https://valorantserver-production.up.railway.app/updateid/${editId}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-        Swal.fire({
-          icon: 'success',
-          title: 'อัปเดตข้อมูลสำเร็จ!',
-          text: 'ข้อมูลถูกแก้ไขเรียบร้อยแล้ว',
-        })
-        setEditId(null)
-      }
+      const url = editId === null
+        ? `https://valorantserver-production.up.railway.app/createid`
+        : `https://valorantserver-production.up.railway.app/updateid/${editId}`
+
+      const method = editId === null ? 'post' : 'put'
+
+      const response = await axios({
+        method,
+        url,
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      console.log("Response from server:", response.data)
+
+      Swal.fire({
+        icon: 'success',
+        title: editId === null ? 'เพิ่มข้อมูลสำเร็จ!' : 'อัปเดตข้อมูลสำเร็จ!',
+        text: editId === null ? 'ข้อมูลถูกเพิ่มแล้วในระบบ' : 'ข้อมูลถูกแก้ไขเรียบร้อยแล้ว',
+      })
+
+      if (editId !== null) setEditId(null)
 
       await fetchdatavalo()
       setName("")
@@ -90,11 +100,13 @@ function App() {
       setDescription("")
       setImageFile(null)
       setImagePreview("")
+
     } catch (error) {
       console.error("Error saving item:", error)
       alert("Error saving item")
     }
   }
+
 
   const deletevalo = async (id) => {
     const confirmResult = await Swal.fire({
@@ -260,27 +272,29 @@ function App() {
             </h2>
             {datavalolist.length === 0 ? (
               <p className="text-gray-500 dark:text-gray-400">No data available.</p>
+
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {datavalolist.map((product) => {
-                  const imageBaseUrl = "http://localhost:3000"; // หรือ URL จริงของเซิร์ฟเวอร์คุณ
-                  const imageSrc = product.imageUrl ? imageBaseUrl + product.imageUrl : "";
+                  console.log(product.imageUrl)
+
+                  const imageSrc = product.imageUrl || "";
 
                   return (
-                    <div
-                      key={product.id}
-                      className="border rounded-lg p-4 shadow-md bg-white dark:bg-gray-700 hover:shadow-lg transition"
-                    >
-                      {/* รูปภาพ */}
+                    <div key={product.id} className="...">
                       {imageSrc && (
-                        <div className="rounded overflow-hidden mb-4" >
+                        <div className="rounded overflow-hidden mb-4">
                           <img
-                            src={imageSrc}
+                            src={product.imageUrl ? `https://valorantserver-production.up.railway.app${product.imageUrl}` : "https://via.placeholder.com/300x180?text=No+Image"}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-100 object-cover"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "https://via.placeholder.com/300x180?text=No+Image";
+                            }}
                           />
-                        </div>
 
+                        </div>
                       )}
 
                       <div className="mb-2">
@@ -294,6 +308,7 @@ function App() {
                           <span className="font-semibold">Price:</span> ${product.price}
                         </p>
                         <p className="text-gray-700 dark:text-gray-200 mt-1">{product.description}</p>
+
                       </div>
 
                       <div className="flex gap-2 mt-4">
@@ -305,14 +320,21 @@ function App() {
                             setPrice(product.price)
                             setDescription(product.description)
                             setImageFile(null)
-                            setImagePreview(imageSrc)  // แสดงรูปเก่าในฟอร์มแก้ไข
+                            setImagePreview(
+                              product.imageUrl
+                                ? `https://valorantserver-production.up.railway.app${product.imageUrl}`
+                                : ""
+                            )
+
                             window.scrollTo({ top: 0, behavior: 'smooth' })
                             setAdditem(true)
                           }}
+
                           className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
                         >
                           Edit
                         </button>
+
                         <button
                           onClick={() => deletevalo(product.id)}
                           className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
@@ -323,6 +345,7 @@ function App() {
                     </div>
                   )
                 })}
+
 
               </div>
             )}
