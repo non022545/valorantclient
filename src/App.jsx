@@ -9,7 +9,7 @@ function App() {
   const [name, setName] = useState("")
   const [rankvalo, setRankvalo] = useState("")
   const [price, setPrice] = useState("")
-  const [description, setDescription] = useState("")
+  const [description, setDescription] = useState("ติดต่อมือ1ได้ เปลี่ยนเมล/รหัสได้ ปลอดภัย 100%")
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState("")
   const [editId, setEditId] = useState(null)
@@ -67,7 +67,7 @@ function App() {
   const saveOrUpdate = async () => {
 
     if (!name.trim() || !rankvalo.trim() || price === "" || isNaN(Number(price)) || !description.trim()) {
-      alert("Please fill all fields correctly.")
+      alert("โปรดกรอกข้อมูลให้ครบถ้วน")
       return
     }
     console.log("Setting loading true")
@@ -121,7 +121,7 @@ function App() {
       setName("")
       setRankvalo("")
       setPrice("")
-      setDescription("")
+      setDescription("ติดต่อมือ1ได้ เปลี่ยนเมล/รหัสได้ ปลอดภัย 100%")
       setImageFile(null)
       setImagePreview("")
 
@@ -194,7 +194,7 @@ function App() {
           </div>
 
           <h1 className="text-4xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
-            Stock Valorant Management
+            ระบบจัดการสินค้าคงคลัง Id Valorant
           </h1>
 
           <div className='flex justify-end'>
@@ -202,19 +202,19 @@ function App() {
               onClick={() => setAdditem(!additem)}
               className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
             >
-              {additem ? "❌ Close Form" : "➕ Add Item"}
+              {additem ? "❌ ซ่อนฟอร์ม" : "➕ เพิ่มสินค้า"}
             </button>
           </div>
 
           {/* Form */}
           {additem &&
             <div className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
-                {editId === null ? "Add New Stock" : "Update Stock"}
+              <h2 className="text-3xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
+                {editId === null ? "เพิ่มสินค้าใหม่" : "อัพเดทสินค้า"}
               </h2>
               <form className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Image Upload</label>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">เลือกรูปภาพ</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -236,7 +236,7 @@ function App() {
 
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ชื่อไอดี</label>
                   <input
                     type="text"
                     value={name}
@@ -246,17 +246,27 @@ function App() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Rank</label>
-                  <input
-                    type="text"
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">แรงค์</label>
+                  <select
                     value={rankvalo}
                     onChange={(e) => setRankvalo(e.target.value)}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="Rank"
-                  />
+                  >
+                    <option value="">-- Select Rank --</option>
+                    <option value="Iron">Iron</option>
+                    <option value="Bronze">Bronze</option>
+                    <option value="Silver">Silver</option>
+                    <option value="Gold">Gold</option>
+                    <option value="Platinum">Platinum</option>
+                    <option value="Diamond">Diamond</option>
+                    <option value="Ascendant">Ascendant</option>
+                    <option value="Immortal">Immortal</option>
+                    <option value="Radiant">Radiant</option>
+                  </select>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Price</label>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ราคา</label>
                   <input
                     type="number"
                     value={price}
@@ -266,7 +276,7 @@ function App() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">รายละเอียด</label>
                   <input
                     type="text"
                     value={description}
@@ -283,7 +293,7 @@ function App() {
                 }}
                 className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
               >
-                {editId === null ? "Save" : "Update"}
+                {editId === null ? "บันทึก" : "อัพเดท"}
               </button>
             </div>
           }
@@ -291,7 +301,7 @@ function App() {
           {/* List */}
           <div className="mt-10">
             <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
-              Stock List
+              สินค้าทั้งหมด
             </h2>
             {datavalolist.length === 0 ? (
               <p className="text-gray-500 dark:text-gray-400">No data available.</p>
@@ -304,7 +314,8 @@ function App() {
                   const imageSrc = product.imageUrl || "";
 
                   return (
-                    <div key={product.id} className="...">
+                    <div key={product.id}
+                      className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 shadow-md bg-white dark:bg-gray-700">
                       {imageSrc && (
                         <div className="rounded overflow-hidden mb-4">
                           <img
@@ -322,16 +333,19 @@ function App() {
                       )}
 
                       <div className="mb-2">
-                        <h3 className="text-lg font-bold text-blue-700 dark:text-blue-300 mb-1">
+                        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
                           #{product.id} - {product.name}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                          <span className="font-semibold">Rank:</span> {product.rankvalo}
+                        <p className="text-lg text-gray-600 dark:text-gray-300">
+                          <span className="font-semibold">แรงค์:</span> {product.rankvalo}
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                          <span className="font-semibold">Price:</span> ${product.price}
+                        <p className="text-lg text-gray-600 dark:text-gray-300 mt-1">
+                          <span className="font-semibold">รายละเอียด:</span> {product.description}
                         </p>
-                        <p className="text-gray-700 dark:text-gray-200 mt-1">{product.description}</p>
+                        <p className="flex gap-2 text-2xl text-gray-600 dark:text-gray-300 mt-5">
+                          <span className="font-semibold">ราคา:</span> <p className='text-green-600 font-bold'>{product.price}</p> บาท
+                        </p>
+
 
                       </div>
 
