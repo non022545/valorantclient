@@ -290,7 +290,7 @@ function App() {
                             className="w-full h-100 object-cover"
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = "https://via.placeholder.com/300x180?text=No+Image";
+                              e.target.src = "https://placehold.co/300x180?text=No+Image";
                             }}
                           />
 
