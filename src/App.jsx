@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
+import imageCompression from 'browser-image-compression'
 
 function App() {
   const [datavalolist, setDatavalolist] = useState([])
@@ -14,9 +15,29 @@ function App() {
   const [editId, setEditId] = useState(null)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [additem, setAdditem] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const btnadditem = () => {
     setAdditem(true)
+  }
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      try {
+        const options = { maxSizeMB: 1, maxWidthOrHeight: 1024 }
+        const compressedFile = await imageCompression(file, options)
+        setImageFile(compressedFile)
+        const reader = new FileReader()
+        reader.onloadend = () => setImagePreview(reader.result)
+        reader.readAsDataURL(compressedFile)
+      } catch (error) {
+        console.log("Compression error:", error)
+      }
+    } else {
+      setImageFile(null)
+      setImagePreview("")
+    }
   }
 
   useEffect(() => {
@@ -44,11 +65,14 @@ function App() {
   };
 
   const saveOrUpdate = async () => {
+
     if (!name.trim() || !rankvalo.trim() || price === "" || isNaN(Number(price)) || !description.trim()) {
       alert("Please fill all fields correctly.")
       return
     }
-
+    console.log("Setting loading true")
+    setIsLoading(true)
+    console.log("Loading state set to true")
     console.log({
       name,
       rankvalo,
@@ -104,6 +128,8 @@ function App() {
     } catch (error) {
       console.error("Error saving item:", error)
       alert("Error saving item")
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -150,6 +176,12 @@ function App() {
   return (
     <div className={isDarkMode ? "dark" : ""}>
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 transition-colors duration-500">
+        {isLoading && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+            <p className="text-white mt-4">กำลังบันทึกข้อมูล...</p>
+          </div>
+        )}
         <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
           {/* Toggle Dark Mode */}
           <div className="flex justify-end mb-4">
@@ -186,19 +218,7 @@ function App() {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files[0]
-                      setImageFile(file)
-                      if (file) {
-                        const reader = new FileReader()
-                        reader.onloadend = () => {
-                          setImagePreview(reader.result)  // base64 ของไฟล์ใหม่
-                        }
-                        reader.readAsDataURL(file)
-                      } else {
-                        setImagePreview("")
-                      }
-                    }}
+                    onChange={handleFileChange}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
@@ -257,7 +277,10 @@ function App() {
                 </div>
               </form>
               <button
-                onClick={saveOrUpdate}
+                onClick={() => {
+                  console.log("Save or Update clicked")
+                  saveOrUpdate()
+                }}
                 className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
               >
                 {editId === null ? "Save" : "Update"}
