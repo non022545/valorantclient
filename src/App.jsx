@@ -4,11 +4,19 @@ import { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import imageCompression from 'browser-image-compression'
 
+
+
+{/**************************************************   UseState   *************************************************/ }
+
 function App() {
   const [datavalolist, setDatavalolist] = useState([])
   const [name, setName] = useState("")
   const [rankvalo, setRankvalo] = useState("")
-  const [price, setPrice] = useState("")
+  const [cost_price, setCost_price] = useState("")
+  const [selling_price, setSelling_price] = useState("")
+  const [profit_price, setProfit_price] = useState("")
+  const [link_user, setLink_user] = useState("")
+  const [status, setStatus] = useState("ยังมีสินค้า")
   const [description, setDescription] = useState("ติดต่อมือ1ได้ เปลี่ยนเมล/รหัสได้ ปลอดภัย 100%")
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState("")
@@ -17,10 +25,46 @@ function App() {
   const [additem, setAdditem] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
 
-  const btnadditem = () => {
-    setAdditem(true)
-  }
 
+  {/**************************************************   UseEffect   *************************************************/ }
+
+
+
+  {/**********************************   Fatchdata   ************************************/ }
+  useEffect(() => {
+    fetchdatavalo()
+  }, [])
+
+  {/**********************************   DarkMode   *************************************/ }
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
+    setIsDarkMode(savedDarkMode);
+  }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  {/**************************************************   Check Log datavalolist   *************************************************/ }
+  useEffect(() => {
+    // console.log('datavalolist:', datavalolist);
+  }, [datavalolist]);
+
+  {/**************************************************   Auto calc Profit_price    *************************************************/ }
+  useEffect(() => {
+    const profit = (parseFloat(selling_price) || 0) - (parseFloat(cost_price) || 0);
+    setProfit_price(profit);
+  }, [cost_price, selling_price]);
+
+
+  {/**************************************************   Event Handler   *************************************************/ }
+
+
+  {/*******************************************   Change File size   ********************************************/ }
   const handleFileChange = async (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -40,43 +84,34 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    console.log('datavalolist:', datavalolist);
-  }, [datavalolist]);
-
-
-  useEffect(() => {
-    const savedDarkMode = localStorage.getItem('isDarkMode') === 'true';
-    setIsDarkMode(savedDarkMode);
-  }, []);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
-
+  {/******************************************   toggleDarkMode   ***********************************************/ }
   const toggleDarkMode = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
     localStorage.setItem('isDarkMode', newMode);
   };
 
+  {/*******************************************   Save & Update   ***********************************************/ }
   const saveOrUpdate = async () => {
+    if (!name.trim() || !rankvalo.trim() || cost_price === "" || isNaN(Number(cost_price)) || selling_price === "" || isNaN(Number(selling_price)) || profit_price === "" || isNaN(Number(profit_price)) || !link_user.trim() || !status.trim() || !description.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'โปรดกรอกข้อมูลให้ครบถ้วน',
+      })
 
-    if (!name.trim() || !rankvalo.trim() || price === "" || isNaN(Number(price)) || !description.trim()) {
-      alert("โปรดกรอกข้อมูลให้ครบถ้วน")
       return
     }
-    console.log("Setting loading true")
+
     setIsLoading(true)
-    console.log("Loading state set to true")
+
     console.log({
       name,
       rankvalo,
-      price,
+      cost_price,
+      selling_price,
+      profit_price,
+      link_user,
+      status,
       description,
       imageFile
     })
@@ -85,16 +120,23 @@ function App() {
       const formData = new FormData()
       formData.append("name", name.trim())
       formData.append("rankvalo", rankvalo.trim())
-      formData.append("price", Number(price))
+      formData.append("cost_price", Number(cost_price))
+      formData.append("selling_price", Number(selling_price))
+      formData.append("profit_price", Number(profit_price))
+      formData.append("link_user", link_user.trim())
+      formData.append("status", status.trim())
       formData.append("description", description.trim())
 
       if (imageFile) {
         formData.append('image', imageFile);
       }
-
+      console.log("📤 กำลังส่งข้อมูลไป backend...");
       const url = editId === null
-        ? `https://valorantserver-production.up.railway.app/createid`
-        : `https://valorantserver-production.up.railway.app/updateid/${editId}`
+        ? `http://localhost:3000/createid`
+        : `http://localhost:3000/updateid/${editId}`
+      // const url = editId === null
+      //   ? `https://valorantserver-production.up.railway.app/createid`
+      //   : `https://valorantserver-production.up.railway.app/updateid/${editId}`
 
       const method = editId === null ? 'post' : 'put'
 
@@ -120,7 +162,11 @@ function App() {
       await fetchdatavalo()
       setName("")
       setRankvalo("")
-      setPrice("")
+      setCost_price("")
+      setSelling_price("")
+      setProfit_price("")
+      setLink_user("")
+      setStatus("")
       setDescription("ติดต่อมือ1ได้ เปลี่ยนเมล/รหัสได้ ปลอดภัย 100%")
       setImageFile(null)
       setImagePreview("")
@@ -133,7 +179,7 @@ function App() {
     }
   }
 
-
+  {/**************************************************   Delete   *************************************************/ }
   const deletevalo = async (id) => {
     const confirmResult = await Swal.fire({
       title: 'คุณแน่ใจหรือไม่?',
@@ -148,8 +194,8 @@ function App() {
 
     if (confirmResult.isConfirmed) {
       try {
-        // await axios.delete(`http://localhost:3000/deleteid/${id}`)
-        await axios.delete(`https://valorantserver-production.up.railway.app/deleteid/${id}`)
+        await axios.delete(`http://localhost:3000/deleteid/${id}`)
+        // await axios.delete(`https://valorantserver-production.up.railway.app/deleteid/${id}`)
         await fetchdatavalo()
         Swal.fire('ลบแล้ว!', 'ข้อมูลถูกลบเรียบร้อย.', 'success')
       } catch (error) {
@@ -159,19 +205,24 @@ function App() {
     }
   }
 
+  {/**********************************************   fetchdatavalo   **********************************************/ }
   const fetchdatavalo = async () => {
     try {
-      // const response = await axios.get(`http://localhost:3000/stockvalorant`)
-      const response = await axios.get(`https://valorantserver-production.up.railway.app/stockvalorant`)
+      const response = await axios.get(`http://localhost:3000/stockvalorant`)
+      // const response = await axios.get(`https://valorantserver-production.up.railway.app/stockvalorant`)
       setDatavalolist(response.data)
     } catch (error) {
       console.log("Fail fetchdatavalorant")
     }
   }
 
-  useEffect(() => {
-    fetchdatavalo()
-  }, [])
+
+
+
+
+
+  {/**************************************************   Document Object Model   *************************************************/ }
+
 
   return (
     <div className={isDarkMode ? "dark" : ""}>
@@ -206,7 +257,7 @@ function App() {
             </button>
           </div>
 
-          {/* Form */}
+          {/**************************************************   Form   *************************************************/}
           {additem &&
             <div className="mb-8">
               <h2 className="text-3xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
@@ -224,17 +275,16 @@ function App() {
                 </div>
 
                 {/* Image Preview */}
-                {/* Image Preview */}
                 {imagePreview && (
                   <img
-                    key={imagePreview}  // บังคับรีเฟรชเมื่อเปลี่ยน
+                    key={imagePreview}
                     src={imagePreview}
                     alt="Preview"
                     className="w-full h-100 object-cover mb-2 rounded"
                   />
                 )}
 
-
+                {/**************************************************   Name   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ชื่อไอดี</label>
                   <input
@@ -242,9 +292,10 @@ function App() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="Name"
+                    placeholder="ชื่อ ID"
                   />
                 </div>
+                {/**************************************************   Rank   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">แรงค์</label>
                   <select
@@ -252,7 +303,7 @@ function App() {
                     onChange={(e) => setRankvalo(e.target.value)}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   >
-                    <option value="">-- Select Rank --</option>
+                    <option value="">-- กรุณาเลือกแรงค์ --</option>
                     <option value="Iron">Iron</option>
                     <option value="Bronze">Bronze</option>
                     <option value="Silver">Silver</option>
@@ -264,17 +315,65 @@ function App() {
                     <option value="Radiant">Radiant</option>
                   </select>
                 </div>
-
+                {/**************************************************   Cost_price   *************************************************/}
                 <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ราคา</label>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ต้นทุน</label>
                   <input
                     type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    value={cost_price}
+                    onChange={(e) => setCost_price(e.target.value)}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="Price"
+                    placeholder="ราคาต้นทุน"
                   />
                 </div>
+                {/**************************************************   Selling_Price   *************************************************/}
+                <div>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ราคาขาย</label>
+                  <input
+                    type="number"
+                    value={selling_price}
+                    onChange={(e) => setSelling_price(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder="ราคาขาย"
+                  />
+                </div>
+                {/**************************************************   Profit_price   *************************************************/}
+                <div>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">กำไร</label>
+                  <input
+                    type="number"
+                    value={profit_price}
+                    readOnly
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                    placeholder="กำไร"
+                  />
+                </div>
+
+                {/**************************************************   Link_user   *************************************************/}
+                <div>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ลิ้ง Facebook มือ 1/2</label>
+                  <input
+                    type="text"
+                    value={link_user}
+                    onChange={(e) => setLink_user(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder="ลิ้ง Facebook"
+                  />
+                </div>
+                {/**************************************************   Status   *************************************************/}
+               <div>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">แรงค์</label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  >
+                    <option value="ยังมีสินค้า">ยังมีสินค้า</option>
+                    <option value="ออกแล้ว">ออกแล้ว</option>
+                    <option value="ผ่อน">ผ่อน</option>
+                  </select>
+                </div>
+                {/**************************************************   description   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">รายละเอียด</label>
                   <input
@@ -282,13 +381,14 @@ function App() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="Description"
+                    placeholder="รายละเอียด"
                   />
                 </div>
               </form>
+              {/**************************************************   Btn Save & Update   *************************************************/}
               <button
                 onClick={() => {
-                  console.log("Save or Update clicked")
+                  // console.log("Save or Update clicked")
                   saveOrUpdate()
                 }}
                 className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
@@ -298,7 +398,7 @@ function App() {
             </div>
           }
 
-          {/* List */}
+          {/**************************************************   Table List   *************************************************/}
           <div className="mt-10">
             <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
               สินค้าทั้งหมด
@@ -309,13 +409,15 @@ function App() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {datavalolist.map((product) => {
-                  console.log(product.imageUrl)
+                  // console.log(product.imageUrl)
 
                   const imageSrc = product.imageUrl || "";
 
                   return (
                     <div key={product.id}
-                      className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 shadow-md bg-white dark:bg-gray-700">
+                      className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 shadow-md bg-white dark:bg-gray-700"
+                    >
+                      {/**************************************************   img   *************************************************/}
                       {imageSrc && (
                         <div className="rounded overflow-hidden mb-4">
                           <img
@@ -333,29 +435,55 @@ function App() {
                       )}
 
                       <div className="mb-2">
+                        {/**************************************************   ID   *************************************************/}
                         <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
-                          #{product.id} - {product.name}
+                          ID {product.id}
                         </h3>
-                        <p className="text-lg text-gray-600 dark:text-gray-300">
-                          <span className="font-semibold">แรงค์:</span> {product.rankvalo}
+                        {/**************************************************   Name   *************************************************/}
+                        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
+                          {product.name}
+                        </h3>
+                        {/**************************************************   Rank   *************************************************/}
+                        <p className="text-lg text-yellow-600">
+                          <span className="font-semibold">แรงค์:</span> <span className='text-pink-500 dark:text-pink-400 font-bold'>{product.rankvalo}</span>
                         </p>
-                        <p className="text-lg text-gray-600 dark:text-gray-300 mt-1">
-                          <span className="font-semibold">รายละเอียด:</span> {product.description}
+                        {/**************************************************   Cost_price   *************************************************/}
+                        <p className="text-lg text-yellow-600 mt-1">
+                          <span className="font-semibold">ต้นทุน:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.cost_price}</span>
                         </p>
-                        <p className="flex gap-2 text-2xl text-gray-600 dark:text-gray-300 mt-5">
-                          <span className="font-semibold">ราคา:</span> <p className='text-green-600 font-bold'>{product.price}</p> บาท
+                        {/**************************************************   Selling_price   *************************************************/}
+                        <p className="text-lg text-yellow-600 mt-1">
+                          <span className="font-semibold">ราคาขาย:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.selling_price}</span>
                         </p>
-
-
+                        {/**************************************************   Profit_price   *************************************************/}
+                        <p className="text-lg text-yellow-600 mt-1">
+                          <span className="font-semibold">กำไร:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.profit_price}</span>
+                        </p>
+                        {/**************************************************   Status   *************************************************/}
+                        <p className="text-lg text-yellow-600 mt-1">
+                          <span className="font-semibold">สถานะ:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.status}</span>
+                        </p>
+                        {/**************************************************   Description   *************************************************/}
+                        <p className="text-lg text-yellow-600 mt-1">
+                          <span className="font-semibold">รายละเอียด:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.description}</span>
+                        </p>
+                        {/**************************************************   Selling_price   *************************************************/}
+                        <p className="flex gap-2 text-2xl text-gray-700 dark:text-gray-300 mt-5">
+                          <span className="font-semibold">ราคา:</span> <span className='text-green-600 font-bold'>{product.selling_price}</span> บาท
+                        </p>
                       </div>
-
+                      {/**************************************************   Btn Edit   *************************************************/}
                       <div className="flex gap-2 mt-4">
                         <button
                           onClick={() => {
                             setEditId(product.id)
                             setName(product.name)
                             setRankvalo(product.rankvalo)
-                            setPrice(product.price)
+                            setCost_price(product.cost_price)
+                            setSelling_price(product.selling_price)
+                            setProfit_price(product.profit_price)
+                            setLink_user(product.link_user)
+                            setStatus(product.status)
                             setDescription(product.description)
                             setImageFile(null)
 
@@ -373,8 +501,7 @@ function App() {
                         >
                           Edit
                         </button>
-
-
+                        {/**************************************************   Btn Delete   *************************************************/}
                         <button
                           onClick={() => deletevalo(product.id)}
                           className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
@@ -385,8 +512,6 @@ function App() {
                     </div>
                   )
                 })}
-
-
               </div>
             )}
           </div>
