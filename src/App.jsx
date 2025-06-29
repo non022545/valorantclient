@@ -584,7 +584,7 @@ function App() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredData.map(product => {
-                  const imageSrc = product.imageUrl || "";
+                  const imageSrc = product.imageurl || "";
 
                   return (
                     <div
@@ -595,7 +595,7 @@ function App() {
                       {imageSrc && (
                         <div className="rounded overflow-hidden mb-4">
                           <img
-                            src={product.imageUrl || "https://placehold.co/300x180?text=No+Image"}
+                            src={product.imageurl || "https://placehold.co/300x180?text=No+Image"}
                             alt={product.name}
                             className="w-full h-100 object-cover"
                             onError={(e) => {
@@ -709,12 +709,12 @@ function App() {
                             setSell_date(toInputDateTimeLocal(product.sell_date));
                             setImageFile(null);
 
-                            const imageUrl = product.imageUrl || "";
-                            const fullImageUrl = imageUrl.startsWith("http")
-                              ? imageUrl
-                              : `https://valorantserver-production.up.railway.app${imageUrl}`;
+                            const imageurl = product.imageurl || "";
+                            const fullimageurl = imageurl.startsWith("http")
+                              ? imageurl
+                              : `https://valorantserver-production.up.railway.app${imageurl}`;
 
-                            setImagePreview(imageUrl ? fullImageUrl : "");
+                            setImagePreview(imageurl ? fullimageurl : "");
 
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                             setAdditem(true);
