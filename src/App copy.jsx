@@ -10,7 +10,6 @@ import imageCompression from 'browser-image-compression'
 
 function App() {
   const [datavalolist, setDatavalolist] = useState([])
-  const [user_name, setUser_name] = useState("")
   const [name, setName] = useState("")
   const [rankvalo, setRankvalo] = useState("")
   const [cost_price, setCost_price] = useState("")
@@ -19,8 +18,6 @@ function App() {
   const [link_user, setLink_user] = useState("")
   const [status, setStatus] = useState("ยังมีสินค้า")
   const [description, setDescription] = useState("ติดต่อมือ1ได้ เปลี่ยนเมล/รหัสได้ ปลอดภัย 100%")
-  const [purchase_date, setPurchase_date] = useState("")
-  const [sell_date, setSell_date] = useState("")
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState("")
   const [editId, setEditId] = useState(null)
@@ -28,7 +25,6 @@ function App() {
   const [additem, setAdditem] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("all");
-
 
 
   {/**************************************************   UseEffect   *************************************************/ }
@@ -66,25 +62,6 @@ function App() {
   }, [cost_price, selling_price]);
 
 
-  useEffect(() => {
-    async function loadData() {
-      const response = await axios.get("/api/get_stockvalorant/1");
-      const dbDate = response.data.purchase_date;
-
-      if (dbDate) {
-        const formatted = toInputDateTimeLocal(dbDate);
-        setPurchase_date(formatted);
-      } else {
-        setPurchase_date("");
-      }
-    }
-
-    loadData();
-  }, []);
-
-
-
-
   {/**************************************************   Event Handler   *************************************************/ }
 
 
@@ -116,19 +93,8 @@ function App() {
   };
 
   {/*******************************************   Save & Update   ***********************************************/ }
-
-  const purchaseDateForMysql = toMysqlDateTime(purchase_date);
-  const sellDateForMysql = toMysqlDateTime(sell_date);
-
-
-  function toMysqlDateTime(localDateTime) {
-    if (!localDateTime) return null;
-    return localDateTime.replace('T', ' ') + ':00';
-  }
-
-
   const saveOrUpdate = async () => {
-    if (!user_name.trim() || !name.trim() || !rankvalo.trim() || cost_price === "" || isNaN(Number(cost_price)) || selling_price === "" || isNaN(Number(selling_price)) || profit_price === "" || isNaN(Number(profit_price)) || !link_user.trim() || !status.trim() || !description.trim()) {
+    if (!name.trim() || !rankvalo.trim() || cost_price === "" || isNaN(Number(cost_price)) || selling_price === "" || isNaN(Number(selling_price)) || profit_price === "" || isNaN(Number(profit_price)) || !link_user.trim() || !status.trim() || !description.trim()) {
       Swal.fire({
         icon: 'warning',
         title: 'โปรดกรอกข้อมูลให้ครบถ้วน',
@@ -140,7 +106,6 @@ function App() {
     setIsLoading(true)
 
     console.log({
-      user_name,
       name,
       rankvalo,
       cost_price,
@@ -149,16 +114,12 @@ function App() {
       link_user,
       status,
       description,
-      imageFile,
-      purchase_date: purchaseDateForMysql, // ✅ แก้ตรงนี้!
-      sell_date: sellDateForMysql          // ✅ แก้ตรงนี้!
-    });
-
+      imageFile
+    })
 
     try {
       const formData = new FormData()
       formData.append("name", name.trim())
-      formData.append("user_name", user_name.trim())
       formData.append("rankvalo", rankvalo.trim())
       formData.append("cost_price", Number(cost_price))
       formData.append("selling_price", Number(selling_price))
@@ -166,10 +127,6 @@ function App() {
       formData.append("link_user", link_user.trim())
       formData.append("status", status.trim())
       formData.append("description", description.trim())
-      formData.append("purchase_date", purchaseDateForMysql);
-      formData.append("sell_date", sellDateForMysql);
-
-
 
       if (imageFile) {
         formData.append('image', imageFile);
@@ -204,20 +161,16 @@ function App() {
       if (editId !== null) setEditId(null)
 
       await fetchdatavalo()
-      setUser_name("")
       setName("")
       setRankvalo("")
       setCost_price("")
       setSelling_price("")
       setProfit_price("")
       setLink_user("")
-      setStatus("ยังมีสินค้า")
+      setStatus("")
       setDescription("ติดต่อมือ1ได้ เปลี่ยนเมล/รหัสได้ ปลอดภัย 100%")
       setImageFile(null)
       setImagePreview("")
-      setPurchase_date("")
-      setSell_date("")
-
 
     } catch (error) {
       console.error("Error saving item:", error)
@@ -264,48 +217,8 @@ function App() {
     }
   }
 
-  {/**************************************************   SelectStatus   *************************************************/ }
 
-  // ✅ สร้าง status list จากข้อมูลจริง
-  const statusList = Array.from(
-    new Set(datavalolist.map(item => item.status.trim()))
-  );
 
-  // 1️⃣ สร้าง map สี
-  const statusColors = {
-    "ยังมีสินค้า": "green",
-    "ออกแล้ว": "red",
-    "ผ่อน": "yellow",
-    // ถ้ามี status อื่นเพิ่มได้เลย
-  };
-
-  // ✅ ฟิลเตอร์ข้อมูลตามสถานะที่เลือก
-  const filteredData = datavalolist.filter(product =>
-    selectedStatus === "all" ? true : product.status.trim() === selectedStatus
-  );
-
-  // ✅ ฟังก์ชันแปลง ISO / Z → local + format สำหรับ <input type="datetime-local">
-  function toInputDateTimeLocal(dateString) {
-    if (!dateString) return "";
-
-    const date = new Date(dateString);
-    const pad = (n) => n.toString().padStart(2, '0');
-
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
-
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  }
-
-  function toInputDateTimeLocal(dateString) {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const pad = n => n.toString().padStart(2, '0');
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  }
 
 
 
@@ -314,14 +227,14 @@ function App() {
 
   return (
     <div className={isDarkMode ? "dark" : ""}>
-      <div className="min-h-screen bg-gray-300 dark:bg-gray-900 py-8 px-4 transition-colors duration-500">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 transition-colors duration-500">
         {isLoading && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
             <p className="text-white mt-4">กำลังบันทึกข้อมูล...</p>
           </div>
         )}
-        <div className="max-w-5xl mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
           {/* Toggle Dark Mode */}
           <div className="flex justify-end mb-4">
             <button
@@ -332,7 +245,7 @@ function App() {
             </button>
           </div>
 
-          <h1 className="text-4xl font-bold text-center text-blue-600 dark:text-blue-300 mb-8">
+          <h1 className="text-4xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
             ระบบจัดการสินค้าคงคลัง Id Valorant
           </h1>
 
@@ -361,15 +274,17 @@ function App() {
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md
-                               shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                               cursor-pointer
-                               file:mr-4 file:py-2 file:px-4
-                               file:rounded file:border-0
-                             file:bg-blue-600 file:text-white
-                             file:hover:bg-blue-700
-                               file:cursor-pointer
-                               file:transition-colors"
+                    className="
+      mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+      shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
+      cursor-pointer
+      file:mr-4 file:py-2 file:px-4
+      file:rounded file:border-0
+      file:bg-blue-600 file:text-white
+      file:hover:bg-blue-700
+      file:cursor-pointer
+      file:transition-colors
+      "
                   />
                 </div>
 
@@ -383,17 +298,7 @@ function App() {
                   />
                 )}
 
-                {/**************************************************   User Name   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">Username</label>
-                  <input
-                    type="text"
-                    value={user_name}
-                    onChange={(e) => setUser_name(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="Username"
-                  />
-                </div>
+
 
                 {/**************************************************   Name   *************************************************/}
                 <div>
@@ -406,7 +311,6 @@ function App() {
                     placeholder="ชื่อ ID"
                   />
                 </div>
-
                 {/**************************************************   Rank   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">แรงค์</label>
@@ -427,7 +331,6 @@ function App() {
                     <option value="Radiant">Radiant</option>
                   </select>
                 </div>
-
                 {/**************************************************   Cost_price   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ต้นทุน</label>
@@ -439,7 +342,6 @@ function App() {
                     placeholder="ราคาต้นทุน"
                   />
                 </div>
-
                 {/**************************************************   Selling_Price   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ราคาขาย</label>
@@ -451,7 +353,6 @@ function App() {
                     placeholder="ราคาขาย"
                   />
                 </div>
-
                 {/**************************************************   Profit_price   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">กำไร</label>
@@ -475,29 +376,6 @@ function App() {
                     placeholder="ลิ้ง Facebook"
                   />
                 </div>
-
-                {/**************************************************   Purchase Date   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">วันที่ซื้อ</label>
-                  <input
-                    type="datetime-local"
-                    value={purchase_date}
-                    onChange={(e) => setPurchase_date(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  />
-                </div>
-
-                {/**************************************************   Sell Date   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">วันที่ขาย</label>
-                  <input
-                    type="datetime-local"
-                    value={sell_date}
-                    onChange={(e) => setSell_date(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  />
-                </div>
-
                 {/**************************************************   Status   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">สถานะ</label>
@@ -542,197 +420,133 @@ function App() {
               สินค้าทั้งหมด
             </h2>
 
-            <div className="flex flex-wrap gap-2 mb-4">
-              {/* ปุ่ม 'ทั้งหมด' */}
+            {/* ✅ ปุ่มกรอง Status */}
+            <div className="flex gap-2 mb-4">
               <button
                 onClick={() => setSelectedStatus("all")}
-                className={`px-3 py-1 rounded ${selectedStatus === "all" ? "bg-blue-600" : "bg-blue-500"
-                  } text-white hover:bg-blue-700`}
+                className={`px-3 py-1 rounded ${selectedStatus === "all" ? "bg-blue-600" : "bg-blue-500"} text-white hover:bg-blue-700`}
               >
                 ทั้งหมด
               </button>
-
-              {/* ✅ ปุ่มกรอง Status */}
-              {[...statusList]
-                .sort((a, b) => {
-                  const order = ["ยังมีสินค้า", "ผ่อน", "ออกแล้ว"];
-                  return order.indexOf(a) - order.indexOf(b);
-                })
-                .map(status => {
-                  const color = statusColors[status] || "purple";
-                  const isSelected = selectedStatus === status;
-
-                  return (
-                    <button
-                      key={status}
-                      onClick={() => setSelectedStatus(status)}
-                      className={`px-3 py-1 rounded 
-                    ${isSelected ? `bg-${color}-500` : `bg-${color}-500`} 
-                    text-white hover:bg-opacity-80`}
-                    >
-                      {status}
-                    </button>
-                  );
-                })}
-
+              <button
+                onClick={() => setSelectedStatus("ขายแล้ว")}
+                className={`px-3 py-1 rounded ${selectedStatus === "ขายแล้ว" ? "bg-green-600" : "bg-green-500"} text-white hover:bg-green-700`}
+              >
+                ขายแล้ว
+              </button>
+              <button
+                onClick={() => setSelectedStatus("พร้อมขาย")}
+                className={`px-3 py-1 rounded ${selectedStatus === "พร้อมขาย" ? "bg-yellow-600" : "bg-yellow-500"} text-white hover:bg-yellow-700`}
+              >
+                พร้อมขาย
+              </button>
+              {/* ✅ เพิ่มปุ่มสถานะอื่น ๆ ได้ที่นี่ */}
             </div>
 
-            {/* ✅ ถ้าไม่มีข้อมูล */}
-            {filteredData.length === 0 ? (
+            {/* ✅ เงื่อนไขว่าง */}
+            {datavalolist.filter(product =>
+              selectedStatus === "all" ? true : product.status.trim() === selectedStatus
+            )
+              .length === 0 ? (
               <p className="text-gray-500 dark:text-gray-400">ไม่มีข้อมูล</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredData.map(product => {
-                  const imageSrc = product.imageUrl || "";
+                {datavalolist
+                  .filter(product =>
+                    selectedStatus === "all" ? true : product.status === selectedStatus
+                  )
+                  .map((product) => {
+                    const imageSrc = product.imageUrl || "";
 
-                  return (
-                    <div
-                      key={product.id}
-                      className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 shadow-md bg-white dark:bg-gray-700"
-                    >
-                      {/* ✅ Image */}
-                      {imageSrc && (
-                        <div className="rounded overflow-hidden mb-4">
-                          <img
-                            src={product.imageUrl || "https://placehold.co/300x180?text=No+Image"}
-                            alt={product.name}
-                            className="w-full h-100 object-cover"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "https://placehold.co/300x180?text=No+Image";
-                            }}
-                          />
+                    return (
+                      <div key={product.id}
+                        className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 shadow-md bg-white dark:bg-gray-700"
+                      >
+                        {/* ✅ Image */}
+                        {imageSrc && (
+                          <div className="rounded overflow-hidden mb-4">
+                            <img
+                              src={product.imageUrl || "https://placehold.co/300x180?text=No+Image"}
+                              alt={product.name}
+                              className="w-full h-100 object-cover"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "https://placehold.co/300x180?text=No+Image";
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        <div className="mb-2">
+                          <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
+                            ID {product.id}
+                          </h3>
+                          <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
+                            {product.name}
+                          </h3>
+                          <p className="text-lg text-yellow-600">
+                            <span className="font-semibold">แรงค์:</span> <span className='text-pink-500 dark:text-pink-400 font-bold'>{product.rankvalo}</span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">ต้นทุน:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.cost_price}</span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">ราคาขาย:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.selling_price}</span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">กำไร:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.profit_price}</span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">สถานะ:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.status}</span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">รายละเอียด:</span> <span className='text-gray-700 dark:text-gray-300 '>{product.description}</span>
+                          </p>
+                          <p className="flex gap-2 text-2xl text-gray-700 dark:text-gray-300 mt-5">
+                            <span className="font-semibold">ราคา:</span> <span className='text-green-600 font-bold'>{product.selling_price}</span> บาท
+                          </p>
                         </div>
-                      )}
 
-                      {/* ✅ ข้อมูลสินค้า */}
-                      <div className="mb-2">
-                        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
-                          ID {product.id}
-                        </h3>
-                        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
-                          {product.name}
-                        </h3>
-                        <p className="text-lg text-yellow-600">
-                          <span className="font-semibold">Username:</span>{" "}
-                          <span className="text-green-500 dark:text-green-400 font-bold">
-                            {product.user_name}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600">
-                          <span className="font-semibold">แรงค์:</span>{" "}
-                          <span className="text-pink-500 dark:text-pink-400 font-bold">
-                            {product.rankvalo}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">ต้นทุน:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.cost_price}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">ราคาขาย:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.selling_price}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">กำไร:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.profit_price}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">สถานะ:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.status}
-                          </span>
-                        </p>
-                        {/* <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">รายละเอียด:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.description}
-                          </span>
-                        </p> */}
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">วันที่ซื้อ:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {new Date(product.purchase_date).toLocaleString('th-TH', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour12: false
-                            }).replace(':', '.')}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">วันที่ขาย:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {new Date(product.sell_date).toLocaleString('th-TH', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour12: false
-                            }).replace(':', '.')}
-                          </span>
-                        </p>
-                        <p className="flex gap-2 text-2xl text-gray-700 dark:text-gray-300 mt-5">
-                          <span className="font-semibold">ราคา:</span>{" "}
-                          <span className="text-green-500 dark:text-green-400 font-bold">
-                            {product.selling_price}
-                          </span>{" "}
-                          บาท
-                        </p>
+                        {/* ✅ ปุ่ม Edit / Delete */}
+                        <div className="flex gap-2 mt-4">
+                          <button
+                            onClick={() => {
+                              setEditId(product.id);
+                              setName(product.name);
+                              setRankvalo(product.rankvalo);
+                              setCost_price(product.cost_price);
+                              setSelling_price(product.selling_price);
+                              setProfit_price(product.profit_price);
+                              setLink_user(product.link_user);
+                              setStatus(product.status);
+                              setDescription(product.description);
+                              setImageFile(null);
+
+                              const imageUrl = product.imageUrl || "";
+                              const fullImageUrl = imageUrl.startsWith("http")
+                                ? imageUrl
+                                : `https://valorantserver-production.up.railway.app${imageUrl}`;
+
+                              setImagePreview(imageUrl ? fullImageUrl : "");
+
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                              setAdditem(true);
+                            }}
+                            className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => deletevalo(product.id)}
+                            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-
-                      {/* ✅ ปุ่ม Edit/Delete */}
-                      <div className="flex gap-2 mt-4">
-                        <button
-                          onClick={() => {
-                            setEditId(product.id);
-                            setUser_name(product.user_name);
-                            setName(product.name);
-                            setRankvalo(product.rankvalo);
-                            setCost_price(product.cost_price);
-                            setSelling_price(product.selling_price);
-                            setProfit_price(product.profit_price);
-                            setLink_user(product.link_user);
-                            setStatus(product.status);
-                            setDescription(product.description);
-                            setPurchase_date(toInputDateTimeLocal(product.purchase_date));
-                            setSell_date(toInputDateTimeLocal(product.sell_date));
-                            setImageFile(null);
-
-                            const imageUrl = product.imageUrl || "";
-                            const fullImageUrl = imageUrl.startsWith("http")
-                              ? imageUrl
-                              : `https://valorantserver-production.up.railway.app${imageUrl}`;
-
-                            setImagePreview(imageUrl ? fullImageUrl : "");
-
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            setAdditem(true);
-                          }}
-                          className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          onClick={() => deletevalo(product.id)}
-                          className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             )}
           </div>
