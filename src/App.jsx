@@ -256,8 +256,8 @@ function App() {
   {/**********************************************   fetchdatavalo   **********************************************/ }
   const fetchdatavalo = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/stockvalorant`)
-      // const response = await axios.get(`https://valorantserver-production.up.railway.app/stockvalorant`)
+      // const response = await axios.get(`http://localhost:3000/stockvalorant`)
+      const response = await axios.get(`https://valorantserver.onrender.com/stockvalorant`)
       setDatavalolist(response.data)
     } catch (error) {
       console.log("Fail fetchdatavalorant")
