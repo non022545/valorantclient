@@ -68,7 +68,8 @@ function App() {
 
   useEffect(() => {
     async function loadData() {
-      const response = await axios.get("/api/get_stockvalorant/1");
+      // const response = await axios.get("/api/get_stockvalorant/1");
+      const response = await axios.get("https://valorantserver.onrender.com/stockvalorant/1");
       const dbDate = response.data.purchase_date;
 
       if (dbDate) {
