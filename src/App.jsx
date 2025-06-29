@@ -665,7 +665,7 @@ function App() {
                               year: 'numeric',
                               hour: '2-digit',
                               minute: '2-digit',
-                              hour12: false
+                              hour24: false
                             }).replace(':', '.')}
                           </span>
                         </p>
@@ -678,7 +678,7 @@ function App() {
                               year: 'numeric',
                               hour: '2-digit',
                               minute: '2-digit',
-                              hour12: false
+                              hour24: false
                             }).replace(':', '.')}
                           </span>
                         </p>
