@@ -333,7 +333,7 @@ function App() {
           </div>
 
           <h1 className="text-4xl font-bold text-center text-blue-600 dark:text-blue-300 mb-8">
-            ระบบจัดการสินค้า Id Valorant
+            ระบบจัดการสินค้ Id Valorant
           </h1>
 
           <div className='flex justify-end'>
