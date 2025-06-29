@@ -312,19 +312,22 @@ function App() {
   function toThaiDate(dateString) {
     if (!dateString) return '-';
 
-    // เติม 'Z' เพื่อบอกว่าเป็น UTC แล้วบวก 7 ชั่วโมง
-    const utcDate = new Date(dateString + 'Z');
-    const thaiTime = new Date(utcDate.getTime() + 7 * 60 * 60 * 1000);
+    // แปลงรูปแบบเป็น ISO string ที่ JS รองรับ
+    const isoString = dateString.replace(' ', 'T'); // "2025-05-14T19:25:00"
 
-    return thaiTime.toLocaleString('th-TH', {
+    const date = new Date(isoString); // จะตีความเป็น local time
+
+    // แสดงผลด้วย 24 ชม. และ . แทน :
+    return date.toLocaleString('th-TH', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: false
-    }).replace(/:/g, '.'); // เปลี่ยน : เป็น .
+      hour12: false,
+    }).replace(/:/g, '.');
   }
+
 
   {/**************************************************   Document Object Model   *************************************************/ }
 
