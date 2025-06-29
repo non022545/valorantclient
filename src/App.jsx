@@ -151,8 +151,8 @@ function App() {
       status,
       description,
       imageFile,
-      purchase_date: purchaseDateForMysql, 
-      sell_date: sellDateForMysql          
+      purchase_date: purchaseDateForMysql,
+      sell_date: sellDateForMysql
     });
 
 
@@ -309,6 +309,22 @@ function App() {
   }
 
 
+  function toThaiDate(dateString) {
+    if (!dateString) return '-';
+
+    // เติม 'Z' เพื่อบอกว่าเป็น UTC แล้วบวก 7 ชั่วโมง
+    const utcDate = new Date(dateString + 'Z');
+    const thaiTime = new Date(utcDate.getTime() + 7 * 60 * 60 * 1000);
+
+    return thaiTime.toLocaleString('th-TH', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).replace(/:/g, '.'); // เปลี่ยน : เป็น .
+  }
 
   {/**************************************************   Document Object Model   *************************************************/ }
 
@@ -659,27 +675,14 @@ function App() {
                         <p className="text-lg text-yellow-600 mt-1">
                           <span className="font-semibold">วันที่ซื้อ:</span>{" "}
                           <span className="text-gray-700 dark:text-gray-300">
-                            {new Date(product.purchase_date).toLocaleString('th-TH', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour24: false
-                            }).replace(':', '.')}
+                            {toThaiDate(product.purchase_date)}
                           </span>
                         </p>
+
                         <p className="text-lg text-yellow-600 mt-1">
                           <span className="font-semibold">วันที่ขาย:</span>{" "}
                           <span className="text-gray-700 dark:text-gray-300">
-                            {new Date(product.sell_date).toLocaleString('th-TH', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour24: false
-                            }).replace(':', '.')}
+                            {toThaiDate(product.sell_date)}
                           </span>
                         </p>
                         <p className="flex gap-2 text-2xl text-gray-700 dark:text-gray-300 mt-5">
