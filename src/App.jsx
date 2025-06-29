@@ -150,8 +150,8 @@ function App() {
       status,
       description,
       imageFile,
-      purchase_date: purchaseDateForMysql, // ✅ แก้ตรงนี้!
-      sell_date: sellDateForMysql          // ✅ แก้ตรงนี้!
+      purchase_date: purchaseDateForMysql, 
+      sell_date: sellDateForMysql          
     });
 
 
@@ -175,12 +175,12 @@ function App() {
         formData.append('image', imageFile);
       }
       console.log("📤 กำลังส่งข้อมูลไป backend...");
-      const url = editId === null
-        ? `http://localhost:3000/createid`
-        : `http://localhost:3000/updateid/${editId}`
       // const url = editId === null
-      //   ? `https://valorantserver-production.up.railway.app/createid`
-      //   : `https://valorantserver-production.up.railway.app/updateid/${editId}`
+      //   ? `http://localhost:3000/createid`
+      //   : `http://localhost:3000/updateid/${editId}`
+      const url = editId === null
+        ? `https://valorantserver.onrender.com/createid`
+        : `https://valorantserver.onrender.com/updateid/${editId}`
 
       const method = editId === null ? 'post' : 'put'
 
@@ -242,8 +242,8 @@ function App() {
 
     if (confirmResult.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3000/deleteid/${id}`)
-        // await axios.delete(`https://valorantserver-production.up.railway.app/deleteid/${id}`)
+        // await axios.delete(`http://localhost:3000/deleteid/${id}`)
+        await axios.delete(`https://valorantserver.onrender.com/deleteid/${id}`)
         await fetchdatavalo()
         Swal.fire('ลบแล้ว!', 'ข้อมูลถูกลบเรียบร้อย.', 'success')
       } catch (error) {
