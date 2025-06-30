@@ -72,12 +72,6 @@ function App() {
       const response = await axios.get("https://valorantserver.onrender.com/stockvalorant/1");
       const dbDate = response.data.purchase_date;
 
-      if (dbDate) {
-        const formatted = toInputDateTimeLocal(dbDate);
-        setPurchase_date(formatted);
-      } else {
-        setPurchase_date("");
-      }
     }
 
     loadData();
@@ -678,7 +672,8 @@ function App() {
                         <p className="text-lg text-yellow-600 mt-1">
                           <span className="font-semibold">วันที่ซื้อ:</span>{" "}
                           <span className="text-gray-700 dark:text-gray-300">
-                            {toThaiDate(product.purchase_date)}
+                            {toThaiDateWithAD(product.purchase_date)} // 09/05/2025 09.25
+
                           </span>
                         </p>
 
