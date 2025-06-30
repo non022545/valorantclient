@@ -72,6 +72,12 @@ function App() {
       const response = await axios.get("https://valorantserver.onrender.com/stockvalorant/1");
       const dbDate = response.data.purchase_date;
 
+      if (dbDate) {
+        const formatted = toInputDateTimeLocal(dbDate);
+        setPurchase_date(formatted);
+      } else {
+        setPurchase_date("");
+      }
     }
 
     loadData();
