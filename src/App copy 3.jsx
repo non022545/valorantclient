@@ -66,22 +66,22 @@ function App() {
   }, [cost_price, selling_price]);
 
 
-  // useEffect(() => {
-  //   async function loadData() {
-  //     // const response = await axios.get("/api/get_stockvalorant/1");
-  //     const response = await axios.get("https://valorantserver.onrender.com/stockvalorant/1");
-  //     const dbDate = response.data.purchase_date;
+  useEffect(() => {
+    async function loadData() {
+      // const response = await axios.get("/api/get_stockvalorant/1");
+      const response = await axios.get("https://valorantserver.onrender.com/stockvalorant/1");
+      const dbDate = response.data.purchase_date;
 
-  //     if (dbDate) {
-  //       const formatted = toInputDateTimeLocal(dbDate);
-  //       setPurchase_date(formatted);
-  //     } else {
-  //       setPurchase_date("");
-  //     }
-  //   }
+      if (dbDate) {
+        const formatted = toInputDateTimeLocal(dbDate);
+        setPurchase_date(formatted);
+      } else {
+        setPurchase_date("");
+      }
+    }
 
-  //   loadData();
-  // }, []);
+    loadData();
+  }, []);
 
 
 
@@ -221,8 +221,8 @@ function App() {
 
 
     } catch (error) {
-      console.error("ไม่สามารถบันทึกข้อมูลได้:", error)
-      alert("ไม่สามารถบันทึกข้อมูลได้.")
+      console.error("Error saving item:", error)
+      alert("Error saving item")
     } finally {
       setIsLoading(false);
     }
@@ -309,34 +309,23 @@ function App() {
   }
 
 
-  // function toThaiDate(dateString) {
-  //   if (!dateString) return '-';
+  function toThaiDate(dateString) {
+    if (!dateString) return '-';
 
-  //   // แปลงรูปแบบเป็น ISO string ที่ JS รองรับ
-  //   const isoString = dateString.replace(' ', 'T'); // "2025-05-14T19:25:00"
+    // แปลงรูปแบบเป็น ISO string ที่ JS รองรับ
+    const isoString = dateString.replace(' ', 'T'); // "2025-05-14T19:25:00"
 
-  //   const date = new Date(isoString); // จะตีความเป็น local time
+    const date = new Date(isoString); // จะตีความเป็น local time
 
-  //   // แสดงผลด้วย 24 ชม. และ . แทน :
-  //   return date.toLocaleString('th-TH', {
-  //     day: '2-digit',
-  //     month: '2-digit',
-  //     year: 'numeric',
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //     hour12: false,
-  //   }).replace(/:/g, '.');
-  // }
-
-  function formatUTCDate(dateString) {
-    const date = new Date(dateString);
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const year = date.getUTCFullYear();
-    const hours = String(date.getUTCHours()).padStart(2, "0");
-    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
+    // แสดงผลด้วย 24 ชม. และ . แทน :
+    return date.toLocaleString('th-TH', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).replace(/:/g, '.');
   }
 
 
@@ -529,6 +518,17 @@ function App() {
                   />
                 </div>
 
+                {/**************************************************   Sell Date   *************************************************/}
+                <div>
+                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">วันที่ขาย</label>
+                  <input
+                    type="datetime-local"
+                    value={sell_date}
+                    onChange={(e) => setSell_date(e.target.value)}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
+
                 {/**************************************************   Status   *************************************************/}
                 <div>
                   <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">สถานะ</label>
@@ -689,13 +689,19 @@ function App() {
                         <p className="text-lg text-yellow-600 mt-1">
                           <span className="font-semibold">วันที่ซื้อ:</span>{" "}
                           <span className="text-gray-700 dark:text-gray-300">
-                            {formatUTCDate(product.purchase_date)}
+                            {toThaiDate(product.purchase_date)}
                           </span>
                         </p>
                         <p className="text-lg text-yellow-600 mt-1">
                           <span className="font-semibold">วันที่ขาย:</span>{" "}
                           <span className="text-gray-700 dark:text-gray-300">
-                            {formatUTCDate(product.sell_date)}
+                            {toThaiDate(product.sell_date)}
+                          </span>
+                        </p>
+                        <p className="text-lg text-yellow-600 mt-1">
+                          <span className="font-semibold">วันที่ขาย:</span>{" "}
+                          <span className="text-gray-700 dark:text-gray-300">
+                            {toThaiDate(product.sell_date)}
                           </span>
                         </p>
                         <p className="flex gap-2 text-2xl text-gray-700 dark:text-gray-300 mt-5">
