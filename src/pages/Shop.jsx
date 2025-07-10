@@ -16,7 +16,8 @@ function Shop() {
 
   const fetchdatavalo = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/stockvalorant`)
+      // const response = await axios.get(`http://localhost:3000/stockvalorant`)
+      const response = await axios.get(`https://valorantserver.onrender.com/stockvalorant`)
       setDatavalo(response.data)
     } catch (error) {
       console.log("ไม่สามารถโหลดข้อมูลได้ API อาจจะมีปัญหา:", error)
