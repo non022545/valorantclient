@@ -329,17 +329,17 @@ function App() {
   //     hour12: false,
   //   }).replace(/:/g, '.');
   // }
-
-  function formatLocalDate(dateString) {
+  function formatUTCDate(dateString) {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    const hours = String(date.getUTCHours()).padStart(2, "0");
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
+
 
 
   {/**************************************************   Document Object Model   *************************************************/ }
@@ -696,13 +696,13 @@ function App() {
                         <p className="text-lg text-yellow-600 mt-1">
                           <span className="font-semibold">วันที่ซื้อ:</span>{" "}
                           <span className="text-gray-700 dark:text-gray-300">
-                            {formatLocalDate(product.purchase_date)}
+                            {formatUTCDate(product.purchase_date)}
                           </span>
                         </p>
                         <p className="text-lg text-yellow-600 mt-1">
                           <span className="font-semibold">วันที่ขาย:</span>{" "}
                           <span className="text-gray-700 dark:text-gray-300">
-                            {formatLocalDate(product.sell_date)}
+                            {formatUTCDate(product.sell_date)}
                           </span>
                         </p>
                         <p className="flex gap-2 text-2xl text-gray-700 dark:text-gray-300 mt-5">
