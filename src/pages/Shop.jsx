@@ -33,10 +33,15 @@ function Shop() {
     <>
       <Nav />
       <div className="min-h-screen bg-gradient-to-br from-purple-950 via-to-gray-900 to-gray-900  flex justify-center items-center">
-         <div className='pt-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-10 gap-10 '>
-          {datavalo.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        <div className='pt-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 p-10 gap-10 '>
+          {datavalo.length === 0 ? (
+            <p className="text-center text-white mt-4">ไม่มี ID Valorant</p>
+          ) : (
+            datavalo.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          )}
+
 
         </div>
       </div>
