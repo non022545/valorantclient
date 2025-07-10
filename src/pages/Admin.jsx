@@ -178,8 +178,8 @@ function App() {
       console.log("📤 กำลังส่งข้อมูลไป backend...");
 
       const url = editId === null
-        ? `http://localhost:3000/createid`
-        : `http://localhost:3000/updateid/${editId}`
+        ? `http://localhost:3000/admin_Npass_non0625232145/createid`
+        : `http://localhost:3000/admin_Npass_non0625232145/updateid/${editId}`
 
       // const url = editId === null
       //   ? `https://valorantserver.onrender.com/createid`
@@ -245,8 +245,8 @@ function App() {
 
     if (confirmResult.isConfirmed) {
       try {
-        // await axios.delete(`http://localhost:3000/deleteid/${id}`)
-        await axios.delete(`https://valorantserver.onrender.com/deleteid/${id}`)
+        await axios.delete(`http://localhost:3000/admin_Npass_non0625232145/deleteid/${id}`)
+        // await axios.delete(`https://valorantserver.onrender.com/deleteid/${id}`)
         await fetchdatavalolist()
         Swal.fire('ลบแล้ว!', 'ข้อมูลถูกลบเรียบร้อย.', 'success')
       } catch (error) {
@@ -259,7 +259,7 @@ function App() {
   {/**********************************************   fetchdatavalolist   **********************************************/ }
   const fetchdatavalolist = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/stockvalorant`)
+      const response = await axios.get(`http://localhost:3000/admin_Npass_non0625232145/stockvalorant`)
       // const response = await axios.get(`https://valorantserver.onrender.com/stockvalorant`)
       setDatavalolist(response.data)
     } catch (error) {
