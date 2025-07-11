@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Swal from 'sweetalert2'
 import imageCompression from 'browser-image-compression'
 import Nav from '../components/Nav';
+import Footer from '../components/Footer';
 
 
 
@@ -786,6 +787,7 @@ function App() {
           </div>
         </div>
       </div >
+      <Footer/>
     </>
   )
 }
