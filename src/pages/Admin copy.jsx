@@ -186,13 +186,13 @@ function App() {
       }
       console.log("📤 กำลังส่งข้อมูลไป backend...");
 
-      // const url = editId === null
-      //   ? `http://localhost:3000/admin_Npass_non0625232145/createid`
-      //   : `http://localhost:3000/admin_Npass_non0625232145/updateid/${editId}`
-
       const url = editId === null
-        ? `https://valorantserver.onrender.com/admin_Npass_non0625232145/createid`
-        : `https://valorantserver.onrender.com/admin_Npass_non0625232145/updateid/${editId}`
+        ? `http://localhost:3000/admin_Npass_non0625232145/createid`
+        : `http://localhost:3000/admin_Npass_non0625232145/updateid/${editId}`
+
+      // const url = editId === null
+      //   ? `https://valorantserver.onrender.com/admin_Npass_non0625232145/createid`
+      //   : `https://valorantserver.onrender.com/admin_Npass_non0625232145/updateid/${editId}`
 
       const method = editId === null ? 'post' : 'put'
 
@@ -269,8 +269,8 @@ function App() {
   {/**********************************************   fetchdatavalolist   **********************************************/ }
   const fetchdatavalolist = async () => {
     try {
-      // const response = await axios.get(`http://localhost:3000/admin_Npass_non0625232145/stockvalorant`)
-      const response = await axios.get(`https://valorantserver.onrender.com/admin_Npass_non0625232145/stockvalorant`)
+      const response = await axios.get(`http://localhost:3000/admin_Npass_non0625232145/stockvalorant`)
+      // const response = await axios.get(`https://valorantserver.onrender.com/admin_Npass_non0625232145/stockvalorant`)
       setDatavalolist(response.data)
     } catch (error) {
       console.log("ไม่สามารถโหลดข้อมูลได้ API อาจจะมีปัญหา:", error)
