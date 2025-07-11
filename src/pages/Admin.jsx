@@ -363,57 +363,58 @@ function App() {
 
 
   return (
-    <div className={isDarkMode ? "dark" : ""}>
-      <Nav/>
-      <div className="min-h-screen bg-gray-300 dark:bg-gray-900 py-8 px-4 transition-colors duration-500">
-        {isLoading && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-            <p className="text-white mt-4">กำลังบันทึกข้อมูล...</p>
-          </div>
-        )}
-        <div className="max-w-5xl mx-auto bg-gray-100 mt-20 dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          {/* Toggle Dark Mode */}
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={toggleDarkMode}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
-            >
-              {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-            </button>
-          </div>
+    <>
+    <Nav/>
+      <div className={isDarkMode ? "dark" : ""}>
+        <div className="min-h-screen bg-gradient-to-br from-purple-950 via-to-gray-900 to-gray-900  py-8 px-4 transition-colors duration-500">
+          {isLoading && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+              <p className="text-white mt-4">กำลังบันทึกข้อมูล...</p>
+            </div>
+          )}
+          <div className="max-w-5xl mx-auto bg-gray-100 mt-20 dark:bg-gray-800 rounded-lg shadow-lg p-8">
+            {/* Toggle Dark Mode */}
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={toggleDarkMode}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
+              >
+                {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+              </button>
+            </div>
 
-          <h1 className="text-4xl font-bold text-center text-blue-600 dark:text-blue-300 mb-8">
-            ระบบจัดการสินค้าคงคลัง Id Valorant
-          </h1>
+            <h1 className="text-4xl font-bold text-center text-purple-800 dark:text-pink-400 mb-8">
+              ระบบจัดการสินค้าคงคลัง Id Valorant
+            </h1>
 
-          <div className='flex justify-end'>
-            <button
-              onClick={() => setAdditem(!additem)}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
-            >
-              {additem ? "❌ ซ่อนฟอร์ม" : "➕ เพิ่มสินค้า"}
-            </button>
-          </div>
+            <div className='flex justify-end'>
+              <button
+                onClick={() => setAdditem(!additem)}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+              >
+                {additem ? "❌ ซ่อนฟอร์ม" : "➕ เพิ่มสินค้า"}
+              </button>
+            </div>
 
-          {/**************************************************   Form   *************************************************/}
-          {additem &&
-            <div className="mb-8">
-              <h2 className="text-3xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
-                {editId === null ? "เพิ่มสินค้าใหม่" : "อัพเดทสินค้า"}
-              </h2>
-              <form className="space-y-4">
-                {/**************************************************   File Image   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200 mb-2">
-                    เลือกรูปภาพ
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md
+            {/**************************************************   Form   *************************************************/}
+            {additem &&
+              <div className="mb-8">
+                <h2 className="text-3xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
+                  {editId === null ? "เพิ่มสินค้าใหม่" : "อัพเดทสินค้า"}
+                </h2>
+                <form className="space-y-4">
+                  {/**************************************************   File Image   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200 mb-2">
+                      เลือกรูปภาพ
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md
                                shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
                                cursor-pointer
                                file:mr-4 file:py-2 file:px-4
@@ -422,369 +423,370 @@ function App() {
                              file:hover:bg-blue-700
                                file:cursor-pointer
                                file:transition-colors"
-                  />
-                </div>
+                    />
+                  </div>
 
-                {/* Image Preview */}
-                {imagePreview && (
-                  <img
-                    key={imagePreview}
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-100 object-cover mb-2 rounded"
-                  />
-                )}
-                
+                  {/* Image Preview */}
+                  {imagePreview && (
+                    <img
+                      key={imagePreview}
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-100 object-cover mb-2 rounded"
+                    />
+                  )}
 
-                {/**************************************************   User Name   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">Username</label>
-                  <input
-                    type="text"
-                    value={user_name}
-                    onChange={(e) => setUser_name(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="Username"
-                  />
-                </div>
 
-                {/**************************************************   Name   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ชื่อไอดี</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="ชื่อ ID"
-                  />
-                </div>
+                  {/**************************************************   User Name   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">Username</label>
+                    <input
+                      type="text"
+                      value={user_name}
+                      onChange={(e) => setUser_name(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      placeholder="Username"
+                    />
+                  </div>
 
-                {/**************************************************   Rank   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">แรงค์</label>
-                  <select
-                    value={rankvalo}
-                    onChange={(e) => setRankvalo(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  >
-                    <option value="">-- กรุณาเลือกแรงค์ --</option>
-                    <option value="Iron">Iron</option>
-                    <option value="Bronze">Bronze</option>
-                    <option value="Silver">Silver</option>
-                    <option value="Gold">Gold</option>
-                    <option value="Platinum">Platinum</option>
-                    <option value="Diamond">Diamond</option>
-                    <option value="Ascendant">Ascendant</option>
-                    <option value="Immortal">Immortal</option>
-                    <option value="Radiant">Radiant</option>
-                  </select>
-                </div>
+                  {/**************************************************   Name   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ชื่อไอดี</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      placeholder="ชื่อ ID"
+                    />
+                  </div>
 
-                {/**************************************************   Cost_price   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ต้นทุน</label>
-                  <input
-                    type="number"
-                    value={cost_price}
-                    onChange={(e) => setCost_price(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="ราคาต้นทุน"
-                  />
-                </div>
+                  {/**************************************************   Rank   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">แรงค์</label>
+                    <select
+                      value={rankvalo}
+                      onChange={(e) => setRankvalo(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    >
+                      <option value="">-- กรุณาเลือกแรงค์ --</option>
+                      <option value="Iron">Iron</option>
+                      <option value="Bronze">Bronze</option>
+                      <option value="Silver">Silver</option>
+                      <option value="Gold">Gold</option>
+                      <option value="Platinum">Platinum</option>
+                      <option value="Diamond">Diamond</option>
+                      <option value="Ascendant">Ascendant</option>
+                      <option value="Immortal">Immortal</option>
+                      <option value="Radiant">Radiant</option>
+                    </select>
+                  </div>
 
-                {/**************************************************   Selling_Price   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ราคาขาย</label>
-                  <input
-                    type="number"
-                    value={selling_price}
-                    onChange={(e) => setSelling_price(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="ราคาขาย"
-                  />
-                </div>
+                  {/**************************************************   Cost_price   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ต้นทุน</label>
+                    <input
+                      type="number"
+                      value={cost_price}
+                      onChange={(e) => setCost_price(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      placeholder="ราคาต้นทุน"
+                    />
+                  </div>
 
-                {/**************************************************   Profit_price   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">กำไร</label>
-                  <input
-                    type="number"
-                    value={profit_price}
-                    readOnly
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100"
-                    placeholder="กำไร"
-                  />
-                </div>
+                  {/**************************************************   Selling_Price   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ราคาขาย</label>
+                    <input
+                      type="number"
+                      value={selling_price}
+                      onChange={(e) => setSelling_price(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      placeholder="ราคาขาย"
+                    />
+                  </div>
 
-                {/**************************************************   Link_user   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ลิ้ง Facebook มือ 1/2</label>
-                  <input
-                    type="text"
-                    value={link_user}
-                    onChange={(e) => setLink_user(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="ลิ้ง Facebook"
-                  />
-                </div>
+                  {/**************************************************   Profit_price   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">กำไร</label>
+                    <input
+                      type="number"
+                      value={profit_price}
+                      readOnly
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                      placeholder="กำไร"
+                    />
+                  </div>
 
-                {/**************************************************   Purchase Date   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">วันที่ซื้อ</label>
-                  <input
-                    type="datetime-local"
-                    value={purchase_date}
-                    onChange={(e) => setPurchase_date(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  />
-                </div>
+                  {/**************************************************   Link_user   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">ลิ้ง Facebook มือ 1/2</label>
+                    <input
+                      type="text"
+                      value={link_user}
+                      onChange={(e) => setLink_user(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      placeholder="ลิ้ง Facebook"
+                    />
+                  </div>
 
-                {/**************************************************   Sell Date   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">วันที่ขาย</label>
-                  <input
-                    type="datetime-local"
-                    value={sell_date}
-                    onChange={(e) => setSell_date(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  />
-                </div>
+                  {/**************************************************   Purchase Date   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">วันที่ซื้อ</label>
+                    <input
+                      type="datetime-local"
+                      value={purchase_date}
+                      onChange={(e) => setPurchase_date(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
 
-                {/**************************************************   Status   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">สถานะ</label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                  >
-                    <option value="ยังมีสินค้า">ยังมีสินค้า</option>
-                    <option value="ออกแล้ว">ออกแล้ว</option>
-                    <option value="ผ่อน">ผ่อน</option>
-                  </select>
-                </div>
-                {/**************************************************   description   *************************************************/}
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">รายละเอียด</label>
-                  <input
-                    type="text"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    placeholder="รายละเอียด"
-                  />
-                </div>
-              </form>
-              {/**************************************************   Btn Save & Update   *************************************************/}
-              <button
-                onClick={() => {
-                  // console.log("Save or Update clicked")
-                  saveOrUpdate()
-                }}
-                className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-              >
-                {editId === null ? "บันทึก" : "อัพเดท"}
-              </button>
-            </div>
-          }
+                  {/**************************************************   Sell Date   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">วันที่ขาย</label>
+                    <input
+                      type="datetime-local"
+                      value={sell_date}
+                      onChange={(e) => setSell_date(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
 
-          {/**************************************************   Table List   *************************************************/}
-          <div className="mt-10">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
-              สินค้าทั้งหมด
-            </h2>
+                  {/**************************************************   Status   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">สถานะ</label>
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    >
+                      <option value="ยังมีสินค้า">ยังมีสินค้า</option>
+                      <option value="ออกแล้ว">ออกแล้ว</option>
+                      <option value="ผ่อน">ผ่อน</option>
+                    </select>
+                  </div>
+                  {/**************************************************   description   *************************************************/}
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 dark:text-gray-200">รายละเอียด</label>
+                    <input
+                      type="text"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      placeholder="รายละเอียด"
+                    />
+                  </div>
+                </form>
+                {/**************************************************   Btn Save & Update   *************************************************/}
+                <button
+                  onClick={() => {
+                    // console.log("Save or Update clicked")
+                    saveOrUpdate()
+                  }}
+                  className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+                >
+                  {editId === null ? "บันทึก" : "อัพเดท"}
+                </button>
+              </div>
+            }
 
-            <div className="flex flex-wrap gap-2 mb-4">
-              {/* ปุ่ม 'ทั้งหมด' */}
-              <button
-                onClick={() => setSelectedStatus("all")}
-                className={`px-3 py-1 rounded ${selectedStatus === "all" ? "bg-blue-600" : "bg-blue-500"
-                  } text-white hover:bg-blue-700`}
-              >
-                ทั้งหมด
-              </button>
+            {/**************************************************   Table List   *************************************************/}
+            <div className="mt-10">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100">
+                สินค้าทั้งหมด
+              </h2>
 
-              {/* ✅ ปุ่มกรอง Status */}
-              {[...statusList]
-                .sort((a, b) => {
-                  const order = ["ยังมีสินค้า", "ผ่อน", "ออกแล้ว"];
-                  return order.indexOf(a) - order.indexOf(b);
-                })
-                .map(status => {
-                  const color = statusColors[status] || "purple";
-                  const isSelected = selectedStatus === status;
+              <div className="flex flex-wrap gap-2 mb-4">
+                {/* ปุ่ม 'ทั้งหมด' */}
+                <button
+                  onClick={() => setSelectedStatus("all")}
+                  className={`px-3 py-1 rounded ${selectedStatus === "all" ? "bg-blue-600" : "bg-blue-500"
+                    } text-white hover:bg-blue-700`}
+                >
+                  ทั้งหมด
+                </button>
 
-                  return (
-                    <button
-                      key={status}
-                      onClick={() => setSelectedStatus(status)}
-                      className={`px-3 py-1 rounded 
+                {/* ✅ ปุ่มกรอง Status */}
+                {[...statusList]
+                  .sort((a, b) => {
+                    const order = ["ยังมีสินค้า", "ผ่อน", "ออกแล้ว"];
+                    return order.indexOf(a) - order.indexOf(b);
+                  })
+                  .map(status => {
+                    const color = statusColors[status] || "purple";
+                    const isSelected = selectedStatus === status;
+
+                    return (
+                      <button
+                        key={status}
+                        onClick={() => setSelectedStatus(status)}
+                        className={`px-3 py-1 rounded 
                     ${isSelected ? `bg-${color}-500` : `bg-${color}-500`} 
                     text-white hover:bg-opacity-80`}
-                    >
-                      {status}
-                    </button>
-                  );
-                })}
+                      >
+                        {status}
+                      </button>
+                    );
+                  })}
 
-            </div>
+              </div>
 
-            {/* ✅ ถ้าไม่มีข้อมูล */}
-            {filteredData.length === 0 ? (
-              <p className="text-gray-500 dark:text-gray-400">ไม่มีข้อมูล</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredData.map(product => {
-                  const imageSrc = product.imageurl || "";
+              {/* ✅ ถ้าไม่มีข้อมูล */}
+              {filteredData.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400">ไม่มีข้อมูล</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredData.map(product => {
+                    const imageSrc = product.imageurl || "";
 
-                  return (
+                    return (
 
-                    <div
-                      key={product.id}
-                      className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 shadow-md bg-white dark:bg-gray-700"
-                    >
-                      {/* ✅ Image */}
-                      {imageSrc && (
+                      <div
+                        key={product.id}
+                        className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 shadow-md bg-white dark:bg-gray-700"
+                      >
+                        {/* ✅ Image */}
+                        {imageSrc && (
 
-                        <div className="rounded overflow-hidden mb-4">
-                          <img
-                            src={product.imageurl || "https://placehold.co/300x180?text=No+Image"}
-                            alt={product.name}
-                            className="w-full h-100 object-cover"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "https://placehold.co/300x180?text=No+Image";
-                            }}
+                          <div className="rounded overflow-hidden mb-4">
+                            <img
+                              src={product.imageurl || "https://placehold.co/300x180?text=No+Image"}
+                              alt={product.name}
+                              className="w-full h-100 object-cover"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "https://placehold.co/300x180?text=No+Image";
+                              }}
 
-                          />
-                        </div>
+                            />
+                          </div>
 
-                      )
-                      }
+                        )
+                        }
 
-                      {/* ✅ ข้อมูลสินค้า */}
-                      <div className="mb-2">
-                        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
-                          ID {product.id}
-                        </h3>
-                        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
-                          {product.name}
-                        </h3>
-                        <p className="text-lg text-yellow-600">
-                          <span className="font-semibold">Username:</span>{" "}
-                          <span className="text-green-500 dark:text-green-400 font-bold">
-                            {product.user_name}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600">
-                          <span className="font-semibold">แรงค์:</span>{" "}
-                          <span className="text-pink-500 dark:text-pink-400 font-bold">
-                            {product.rankvalo}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">ต้นทุน:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.cost_price}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">ราคาขาย:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.selling_price}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">กำไร:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.profit_price}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">สถานะ:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {product.status}
-                          </span>
-                        </p>
-                        {/* <p className="text-lg text-yellow-600 mt-1">
+                        {/* ✅ ข้อมูลสินค้า */}
+                        <div className="mb-2">
+                          <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
+                            ID {product.id}
+                          </h3>
+                          <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">
+                            {product.name}
+                          </h3>
+                          <p className="text-lg text-yellow-600">
+                            <span className="font-semibold">Username:</span>{" "}
+                            <span className="text-green-500 dark:text-green-400 font-bold">
+                              {product.user_name}
+                            </span>
+                          </p>
+                          <p className="text-lg text-yellow-600">
+                            <span className="font-semibold">แรงค์:</span>{" "}
+                            <span className="text-pink-500 dark:text-pink-400 font-bold">
+                              {product.rankvalo}
+                            </span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">ต้นทุน:</span>{" "}
+                            <span className="text-gray-700 dark:text-gray-300">
+                              {product.cost_price}
+                            </span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">ราคาขาย:</span>{" "}
+                            <span className="text-gray-700 dark:text-gray-300">
+                              {product.selling_price}
+                            </span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">กำไร:</span>{" "}
+                            <span className="text-gray-700 dark:text-gray-300">
+                              {product.profit_price}
+                            </span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">สถานะ:</span>{" "}
+                            <span className="text-gray-700 dark:text-gray-300">
+                              {product.status}
+                            </span>
+                          </p>
+                          {/* <p className="text-lg text-yellow-600 mt-1">
                           <span className="font-semibold">รายละเอียด:</span>{" "}
                           <span className="text-gray-700 dark:text-gray-300">
                             {product.description}
                           </span>
                         </p> */}
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">วันที่ซื้อ:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {formatLocalDate(product.purchase_date)}
-                          </span>
-                        </p>
-                        <p className="text-lg text-yellow-600 mt-1">
-                          <span className="font-semibold">วันที่ขาย:</span>{" "}
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {formatLocalDate(product.sell_date)}
-                          </span>
-                        </p>
-                        <p className="flex gap-2 text-2xl text-gray-700 dark:text-gray-300 mt-5">
-                          <span className="font-semibold">ราคา:</span>{" "}
-                          <span className="text-green-500 dark:text-green-400 font-bold">
-                            {product.selling_price}
-                          </span>{" "}
-                          บาท
-                        </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">วันที่ซื้อ:</span>{" "}
+                            <span className="text-gray-700 dark:text-gray-300">
+                              {formatLocalDate(product.purchase_date)}
+                            </span>
+                          </p>
+                          <p className="text-lg text-yellow-600 mt-1">
+                            <span className="font-semibold">วันที่ขาย:</span>{" "}
+                            <span className="text-gray-700 dark:text-gray-300">
+                              {formatLocalDate(product.sell_date)}
+                            </span>
+                          </p>
+                          <p className="flex gap-2 text-2xl text-gray-700 dark:text-gray-300 mt-5">
+                            <span className="font-semibold">ราคา:</span>{" "}
+                            <span className="text-green-500 dark:text-green-400 font-bold">
+                              {product.selling_price}
+                            </span>{" "}
+                            บาท
+                          </p>
+                        </div>
+
+                        {/* ✅ ปุ่ม Edit/Delete */}
+                        <div className="flex gap-2 mt-4">
+                          <button
+                            onClick={() => {
+                              setEditId(product.id);
+                              setUser_name(product.user_name);
+                              setName(product.name);
+                              setRankvalo(product.rankvalo);
+                              setCost_price(product.cost_price);
+                              setSelling_price(product.selling_price);
+                              setProfit_price(product.profit_price);
+                              setLink_user(product.link_user);
+                              setStatus(product.status);
+                              setDescription(product.description);
+                              setPurchase_date(toInputDateTimeLocal(product.purchase_date));
+                              setSell_date(toInputDateTimeLocal(product.sell_date));
+                              setImageFile(null);
+
+                              const imageurl = product.imageurl || "";
+                              const fullimageurl = imageurl.startsWith("http")
+                                ? imageurl
+                                : `https://valorantserver-production.up.railway.app${imageurl}`;
+
+                              setImagePreview(imageurl ? fullimageurl : "");
+
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                              setAdditem(true);
+                            }}
+                            className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => deletevalo(product.id)}
+                            className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
-                      {/* ✅ ปุ่ม Edit/Delete */}
-                      <div className="flex gap-2 mt-4">
-                        <button
-                          onClick={() => {
-                            setEditId(product.id);
-                            setUser_name(product.user_name);
-                            setName(product.name);
-                            setRankvalo(product.rankvalo);
-                            setCost_price(product.cost_price);
-                            setSelling_price(product.selling_price);
-                            setProfit_price(product.profit_price);
-                            setLink_user(product.link_user);
-                            setStatus(product.status);
-                            setDescription(product.description);
-                            setPurchase_date(toInputDateTimeLocal(product.purchase_date));
-                            setSell_date(toInputDateTimeLocal(product.sell_date));
-                            setImageFile(null);
 
-                            const imageurl = product.imageurl || "";
-                            const fullimageurl = imageurl.startsWith("http")
-                              ? imageurl
-                              : `https://valorantserver-production.up.railway.app${imageurl}`;
-
-                            setImagePreview(imageurl ? fullimageurl : "");
-
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            setAdditem(true);
-                          }}
-                          className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 transition"
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          onClick={() => deletevalo(product.id)}
-                          className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
-
-
         </div>
-      </div>
-    </div >
+      </div >
+    </>
   )
 }
 
