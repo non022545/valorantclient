@@ -384,7 +384,7 @@ function App() {
               </button>
             </div>
 
-            <h1 className="text-4xl font-bold text-center text-purple-800 dark:text-pink-400 mb-8">
+            <h1 className="text-4xl font-bold text-center text-purple-800 dark:text-purple-400 mb-8">
               ระบบจัดการสินค้าคงคลัง Id Valorant
             </h1>
 
