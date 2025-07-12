@@ -278,7 +278,11 @@ function App() {
   const fetchdatavalolist = async () => {
     try {
       // const response = await axios.get(`http://localhost:3000/admin_Npass_non0625232145/stockvalorant`)
-      const response = await axios.get(`https://valorantserver.onrender.com/admin_Npass_non0625232145/stockvalorant`)
+      const response = await axios.get(`https://valorantserver.onrender.com/admin_Npass_non0625232145/stockvalorant`,{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
       setDatavalolist(response.data)
     } catch (error) {
       console.log("ไม่สามารถโหลดข้อมูลได้ API อาจจะมีปัญหา:", error)
