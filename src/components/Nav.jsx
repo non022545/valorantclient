@@ -17,6 +17,7 @@ function Nav() {
               <Link className='hover:text-pink-600 hover:text-lg md:hover:text-3xl' to="/Shop">Shop</Link>
               <Link className='hover:text-pink-600 hover:text-lg md:hover:text-3xl' to="/Contact">Contact</Link>
               <Link className='hover:text-pink-600 hover:text-lg md:hover:text-3xl' to="/Admin_Npass_non0625232145">Admin</Link>
+              <Link className='hover:text-pink-600 hover:text-lg md:hover:text-3xl' to="/Alllogin">Login</Link>
             </div>
           </div>
       

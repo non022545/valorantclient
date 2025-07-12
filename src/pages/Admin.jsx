@@ -4,6 +4,8 @@ import Swal from 'sweetalert2'
 import imageCompression from 'browser-image-compression'
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 
 
@@ -31,7 +33,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("all");
   const fileInputRef = useRef(null);
-
+  const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนหน้า
 
 
   {/**************************************************   UseEffect   *************************************************/ }
@@ -91,6 +93,11 @@ function App() {
 
   {/**************************************************   Event Handler   *************************************************/ }
 
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    navigate('/');  // พาไปหน้า login
+  };
 
   {/*******************************************   Change File size   ********************************************/ }
   const handleFileChange = async (e) => {
@@ -355,9 +362,12 @@ function App() {
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
+  const token = localStorage.getItem('token');
 
-
-
+ if (!token) {
+    // ถ้าไม่มี token ให้ไปหน้า login
+    return <Navigate to="/Alllogin" />;
+  }
 
 
   {/**************************************************   Document Object Model   *************************************************/ }
@@ -365,8 +375,9 @@ function App() {
 
   return (
     <>
-    <Nav/>
+      <Nav />
       <div className={isDarkMode ? "dark" : ""}>
+
         <div className="min-h-screen bg-gradient-to-br from-purple-950 via-to-gray-900 to-gray-900  py-8 px-4 transition-colors duration-500">
           {isLoading && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -388,6 +399,9 @@ function App() {
             <h1 className="text-4xl font-bold text-center text-purple-800 dark:text-purple-400 mb-8">
               ระบบจัดการสินค้าคงคลัง Id Valorant
             </h1>
+            <button onClick={logout}>
+              Logout
+            </button>
 
             <div className='flex justify-end'>
               <button
@@ -787,7 +801,7 @@ function App() {
           </div>
         </div>
       </div >
-      <Footer/>
+      <Footer />
     </>
   )
 }

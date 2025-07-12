@@ -10,6 +10,7 @@ import Admin from './pages/Admin.jsx';
 import Login from './pages/Login.jsx';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Alllogin from './pages/Alllogin.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,6 +19,7 @@ function App() {
     { path: '/', element: <Home /> },
     { path: '/Shop', element: <Shop /> },
     { path: '/Contact', element: <Contact /> },
+    { path: '/Alllogin', element: <Alllogin/> },
     { path: '/Admin_Npass_non0625232145', element: <Admin isLoggedIn={isLoggedIn} /> },
     { path: '/login', element: <Login onLogin={setIsLoggedIn} /> },
   ]);
