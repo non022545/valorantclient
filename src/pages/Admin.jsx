@@ -204,6 +204,17 @@ function App() {
 
       const method = editId === null ? 'post' : 'put'
 
+      // ดึง token จาก localStorage หรือที่เก็บไว้
+      const token = localStorage.getItem('token');
+      if (!token) {
+        Swal.fire({
+          icon: 'error',
+          title: 'กรุณาล็อกอินก่อนทำรายการ',
+        });
+        setIsLoading(false);
+        return;
+      }
+      
       const response = await axios({
         method,
         url,
@@ -278,11 +289,11 @@ function App() {
   const fetchdatavalolist = async () => {
     try {
       // const response = await axios.get(`http://localhost:3000/admin_Npass_non0625232145/stockvalorant`)
-      const response = await axios.get(`https://valorantserver.onrender.com/admin_Npass_non0625232145/stockvalorant`,{
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+      const response = await axios.get(`https://valorantserver.onrender.com/admin_Npass_non0625232145/stockvalorant`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setDatavalolist(response.data)
     } catch (error) {
       console.log("ไม่สามารถโหลดข้อมูลได้ API อาจจะมีปัญหา:", error)
@@ -368,7 +379,7 @@ function App() {
   }
   const token = localStorage.getItem('token');
 
- if (!token) {
+  if (!token) {
     // ถ้าไม่มี token ให้ไปหน้า login
     return <Navigate to="/Alllogin" />;
   }
