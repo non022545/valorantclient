@@ -214,15 +214,17 @@ function App() {
         setIsLoading(false);
         return;
       }
-      
+
       const response = await axios({
         method,
         url,
         data: formData,
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}` // ✅ เพิ่มบรรทัดนี้
         }
       })
+
 
       console.log("Response from server:", response.data)
 
@@ -274,8 +276,14 @@ function App() {
 
     if (confirmResult.isConfirmed) {
       try {
-        // await axios.delete(`http://localhost:3000/admin_Npass_non0625232145/deleteid/${id}`)
-        await axios.delete(`https://valorantserver.onrender.com/admin_Npass_non0625232145/deleteid/${id}`)
+        const token = localStorage.getItem("token"); // หรือที่คุณเก็บ token ไว้
+
+        await axios.delete(`https://valorantserver.onrender.com/admin_Npass_non0625232145/deleteid/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
         await fetchdatavalolist()
         Swal.fire('ลบแล้ว!', 'ข้อมูลถูกลบเรียบร้อย.', 'success')
       } catch (error) {
@@ -320,28 +328,24 @@ function App() {
     selectedStatus === "all" ? true : product.status.trim() === selectedStatus
   );
 
-  // ✅ ฟังก์ชันแปลง ISO / Z → local + format สำหรับ <input type="datetime-local">
-  function toInputDateTimeLocal(dateString) {
+  function toInputDateTimeLocalUTC(dateString) {
     if (!dateString) return "";
 
     const date = new Date(dateString);
-    const pad = (n) => n.toString().padStart(2, '0');
 
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
+    const pad = n => n.toString().padStart(2, '0');
+
+    // ดึงค่าแบบ UTC (ไม่ใช้ local time)
+    const year = date.getUTCFullYear();
+    const month = pad(date.getUTCMonth() + 1);
+    const day = pad(date.getUTCDate());
+    const hours = pad(date.getUTCHours());
+    const minutes = pad(date.getUTCMinutes());
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  function toInputDateTimeLocal(dateString) {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const pad = n => n.toString().padStart(2, '0');
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  }
+
 
 
   // function toThaiDate(dateString) {
@@ -369,14 +373,16 @@ function App() {
 
     const date = new Date(dateString);
 
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    const hours = String(date.getUTCHours()).padStart(2, "0");
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
+
+
   const token = localStorage.getItem('token');
 
   if (!token) {
@@ -393,7 +399,7 @@ function App() {
       <Nav />
       <div className={isDarkMode ? "dark" : ""}>
 
-        <div className="min-h-screen bg-gradient-to-br from-purple-950 via-to-gray-900 to-gray-900  py-8 px-4 transition-colors duration-500">
+        <div className="min-h-screen bg-slate-200 dark:bg-gradient-to-br from-purple-800 via-purple-950 to-gray-900 py-8 px-4 transition-colors duration-500">
           {isLoading && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
@@ -401,6 +407,11 @@ function App() {
             </div>
           )}
           <div className="max-w-5xl mx-auto bg-gray-100 mt-20 dark:bg-gray-800 rounded-lg shadow-lg p-8">
+            <div className='flex justify-end text-white mb-5'>
+              <button className='bg-red-700 py-5 px-2 rounded-full text-center' onClick={logout}>
+                Logout
+              </button>
+            </div>
             {/* Toggle Dark Mode */}
             <div className="flex justify-end mb-4">
               <button
@@ -414,9 +425,7 @@ function App() {
             <h1 className="text-4xl font-bold text-center text-purple-800 dark:text-purple-400 mb-8">
               ระบบจัดการสินค้าคงคลัง Id Valorant
             </h1>
-            <button onClick={logout}>
-              Logout
-            </button>
+
 
             <div className='flex justify-end'>
               <button
@@ -779,8 +788,8 @@ function App() {
                               setLink_user(product.link_user);
                               setStatus(product.status);
                               setDescription(product.description);
-                              setPurchase_date(toInputDateTimeLocal(product.purchase_date));
-                              setSell_date(toInputDateTimeLocal(product.sell_date));
+                              setPurchase_date(toInputDateTimeLocalUTC(product.purchase_date));
+                              setSell_date(toInputDateTimeLocalUTC(product.sell_date));
                               setImageFile(null);
 
                               const imageurl = product.imageurl || "";

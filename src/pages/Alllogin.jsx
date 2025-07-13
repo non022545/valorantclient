@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Login from './Login';
+import Nav from '../components/Nav';
 
 function Alllogin() {
   const [user, setUser] = useState(null);
@@ -22,9 +23,12 @@ function Alllogin() {
 
 
   return (
+    <>
+    <Nav/>
     <div>
       {!user && <Login />}
     </div>
+    </>
   );
 }
 
