@@ -277,7 +277,7 @@ function App() {
     if (confirmResult.isConfirmed) {
       try {
         const token = localStorage.getItem("token"); // หรือที่คุณเก็บ token ไว้
-
+        // await axios.delete(`http://localhost:3000/admin_Npass_non0625232145/deleteid/${id}`, {
         await axios.delete(`https://valorantserver.onrender.com/admin_Npass_non0625232145/deleteid/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
