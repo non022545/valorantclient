@@ -13,7 +13,7 @@ function Alllogin() {
       return;
     }
     
-    axios.get('http://localhost:3000/me', {
+    axios.get('https://valorantserver.onrender.com/admin_Npass_non0625232145/me', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => setUser(res.data.username))  // หรือ res.data.userId ขึ้นกับ API response

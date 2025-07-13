@@ -11,7 +11,8 @@ function Login() {
 
   const login = async () => {  // เปลี่ยนชื่อจาก Login เป็น login
     try {
-      const res = await axios.post('http://localhost:3000/login', { username, password });
+      // const res = await axios.post('http://localhost:3000/login', { username, password });
+      const res = await axios.post('https://valorantserver.onrender.com/admin_Npass_non0625232145/login', { username, password });
       const token = res.data.token;
       localStorage.setItem('token', token);
       Swal.fire({
