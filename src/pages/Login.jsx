@@ -40,7 +40,7 @@ function Login() {
   return (
     <div className='min-h-screen flex justify-center items-center bg-[url("/images/pagelogin.jpg")]'>
 
-      <div className="bg-black/80 text-white p-8 rounded-lg shadow-lg w-full max-w-sm space-y-4">
+      <div className="bg-black/80 m-8 text-white p-8 rounded-lg shadow-lg w-full max-w-sm space-y-4">
         <h2 className="text-2xl font-bold text-center">Login</h2>
 
         <input
